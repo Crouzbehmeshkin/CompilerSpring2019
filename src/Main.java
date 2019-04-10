@@ -1,4 +1,3 @@
-import java.io.FileWriter;
 import java.util.ArrayList;
 
 
@@ -11,8 +10,9 @@ public class Main {
         ArrayList<Token> list = new ArrayList<>();
         LexicalAnalyzer lexer = new LexicalAnalyzer(io);
         Token token = null;
-
         io.readInput();
+
+        ArrayList<Token> tokens = new ArrayList<>();
 
         while(true)
         {
@@ -20,26 +20,13 @@ public class Main {
             if (token == null)
                 break;
 
-            lexer.tokens.add(token);
-            System.out.println("(" + token.getType() + ", " +  token.getToken() + ")");
-
+            tokens.add(token);
             if (token.getType().equals("EOF"))
                 break;
         }
 
-
-//        try{
-//
-//            FileWriter tokenWriter = new FileWriter("tokens.txt");
-//            lexer.printTokens(tokenWriter);
-//
-//            FileWriter errorWriter = new FileWriter("errors.txt");
-//            lexer.printErrors(errorWriter , lexer.errors);
-//        }
-//        catch (Exception e){
-//            e.printStackTrace();
-//        }
-
+        io.printTokens(tokens);
+        io.printErrors(lexer.getErrors());
 
     }
 }

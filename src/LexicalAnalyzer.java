@@ -1,21 +1,22 @@
-import java.io.File;
-import java.io.FileWriter;
-import java.io.PrintWriter;
 import java.util.ArrayList;
 
 public class LexicalAnalyzer {
     private IO io;
     private int index;
     private int line_number;
-    ArrayList<Error> errors ;
-    ArrayList<Token> tokens ;
+    private ArrayList<Error> errors ;
+
     public LexicalAnalyzer(IO io)
     {
         this.io = io;
         this.index = 0;
         line_number = 1;
         errors = new ArrayList<>();
-        tokens = new ArrayList<>();
+    }
+
+    public ArrayList<Error> getErrors()
+    {
+        return errors;
     }
 
     public Token getNextToken(){
@@ -258,38 +259,9 @@ public class LexicalAnalyzer {
                 c == ',' || c == '+' || c == '{' || c == '}';
     }
 
-    public void makeError(String token, String msg){
+    private void makeError(String token, String msg){
         Error error = new Error(line_number , token , msg);
         errors.add(error);
-    }
-
-    public void printErrors(FileWriter fileWriter , ArrayList<Error> errors){
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-        try{
-            for (Error error : errors) {
-                 printWriter.print( (error.getLine_number() + ".   (" +  error.getString() + "," + error.getMessage() + ")"));
-
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-
-    }
-
-    public void printTokens(FileWriter fileWriter)
-    {
-        PrintWriter printWriter = new PrintWriter(fileWriter);
-
-        try{
-        for (Token token : tokens) {
-                System.out.println(   (token.getLine_number() + ".   (" +  token.getType()+ "," + token.getToken() + ")"));
-                printWriter.print( (token.getLine_number() + ".   (" +  token.getType()+ "," + token.getToken() + ")"));
-            }
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
     }
 
     private boolean isValid(char c)

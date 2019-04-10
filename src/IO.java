@@ -1,7 +1,4 @@
-import java.io.FileInputStream;
-import java.io.InputStream;
-import java.io.InputStreamReader;
-import java.io.Reader;
+import java.io.*;
 import java.util.ArrayList;
 
 public class IO {
@@ -26,5 +23,15 @@ public class IO {
             e.printStackTrace();
         }
         input.add('\0');
+    }
+
+    public void printTokens(ArrayList<Token> tokens)
+    {
+        //todo
+    }
+
+    public void printErrors(ArrayList<Error> errors)
+    {
+        //todo
     }
 }
