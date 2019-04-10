@@ -5,6 +5,7 @@ public class LexicalAnalyzer {
     private int index;
     private int line_number;
     private ArrayList<Error> errors ;
+    private int saved_line_number;
 
     public LexicalAnalyzer(IO io)
     {
@@ -12,6 +13,7 @@ public class LexicalAnalyzer {
         this.index = 0;
         line_number = 1;
         errors = new ArrayList<>();
+        saved_line_number = 1;
     }
 
     public ArrayList<Error> getErrors()
@@ -26,10 +28,12 @@ public class LexicalAnalyzer {
         while (!found)
         {
             char state = 'A';
+
             while (state != '_') {
                 char peek = io.input.get(index);
                 switch (state) {
                     case 'A':
+                        saved_line_number = line_number;
                         string = new StringBuilder();
                         if (isDigit(peek))
                             state = 'B';
@@ -44,7 +48,7 @@ public class LexicalAnalyzer {
                         else if (isWhitespace(peek))
                             state = 'O';
                         else if (peek == '\0') {
-                            return new Token("EOF", "End Of File", line_number);
+                            return new Token("EOF", "End Of File", saved_line_number);
                         } else {
                             state = 'A';
                             if (isValid(peek))
@@ -58,7 +62,7 @@ public class LexicalAnalyzer {
                             state = 'C';
                         else {
                             if (isValid(peek)) {
-                                ret = new Token("NUM", string.toString(), line_number);
+                                ret = new Token("NUM", string.toString(), saved_line_number);
                                 state = '_';
                             } else {
                                 makeError(string.append(peek).toString(), "Invalid Input");
@@ -71,7 +75,7 @@ public class LexicalAnalyzer {
                             state = 'C';
                         else {
                             if (isValid(peek)) {
-                                ret = new Token("NUM", string.toString(), line_number);
+                                ret = new Token("NUM", string.toString(), saved_line_number);
                                 state = '_';
                             } else {
                                 makeError(string.append(peek).toString(), "invalid input");
@@ -87,9 +91,9 @@ public class LexicalAnalyzer {
                         else {
                             if (isValid(peek)) {
                                 if (isKeyWord(string.toString()))
-                                    ret = new Token("KEYWORD", string.toString(), line_number);
+                                    ret = new Token("KEYWORD", string.toString(), saved_line_number);
                                 else
-                                    ret = new Token("ID", string.toString(), line_number);
+                                    ret = new Token("ID", string.toString(), saved_line_number);
                                 state = '_';
                             } else {
                                 makeError(string.append(peek).toString(), "Invalid Input");
@@ -102,7 +106,7 @@ public class LexicalAnalyzer {
                             state = 'H';
                         else {
                             if (isValid(peek)) {
-                                ret = new Token("SYMBOL", string.toString(), line_number);
+                                ret = new Token("SYMBOL", string.toString(), saved_line_number);
                                 state = '_';
                             } else {
                                 makeError(string.append(peek).toString(), "Invalid Input");
@@ -112,7 +116,7 @@ public class LexicalAnalyzer {
                         break;
                     case 'H':
                         if (isValid(peek)) {
-                            ret = new Token("SYMBOL", string.toString(), line_number);
+                            ret = new Token("SYMBOL", string.toString(), saved_line_number);
                             state = '_';
                         } else {
                             makeError(string.append(peek).toString(), "Invalid Input");
@@ -139,7 +143,7 @@ public class LexicalAnalyzer {
                             state = 'M';
                         else {
                             makeError(string.toString(), "Unterminated Comment");
-                            return new Token("_UC", "Unterminated Comment", line_number);
+                            return new Token("_UC", "Unterminated Comment", saved_line_number);
                         }
                         break;
                     case 'L':
@@ -151,7 +155,7 @@ public class LexicalAnalyzer {
                             state = 'M';
                         else {
                             makeError(string.toString(), "Unterminated Comment");
-                            return new Token("_UC", "Unterminated Comment", line_number);
+                            return new Token("_UC", "Unterminated Comment", saved_line_number);
                         }
                         break;
                     case 'M':
@@ -161,12 +165,12 @@ public class LexicalAnalyzer {
                             state = 'M';
                         else {
                             makeError(string.toString(), "Unterminated Comment");
-                            return new Token("_UC", "Unterminated Comment", line_number);
+                            return new Token("_UC", "Unterminated Comment", saved_line_number);
                         }
                         break;
                     case 'N':
                         if (isValid(peek)) {
-                            ret = new Token("COMMENT", string.toString(), line_number);
+                            ret = new Token("COMMENT", string.toString(), saved_line_number);
                             state = '_';
                         } else {
                             makeError(string.append(peek).toString(), "Invalid Input");
@@ -177,7 +181,7 @@ public class LexicalAnalyzer {
                         if (isWhitespace(peek))
                             state = 'O';
                         else {
-                            ret = new Token("WHITESPACE", string.toString(), line_number);
+                            ret = new Token("WHITESPACE", string.toString(), saved_line_number);
                             state = '_';
                         }
                         break;
@@ -185,17 +189,17 @@ public class LexicalAnalyzer {
                         if (peek == '\n')
                             state = 'S';
                         else if (peek != '\0')
-                            state = 'T';
+                            state = 'R';
                         else {
                             makeError(string.toString(), "Unterminated Comment");
-                            return new Token("_UC", "Unterminated Comment", line_number);
+                            return new Token("_UC", "Unterminated Comment", saved_line_number);
                         }
                         break;
                     case 'S':
                         if (isValid(peek))
                         {
                             state = '_';
-                            ret = new Token("COMMENT", string.toString(), line_number);
+                            ret = new Token("COMMENT", string.toString(), saved_line_number);
                         }
                         else
                         {
@@ -203,17 +207,9 @@ public class LexicalAnalyzer {
                             makeError(string.toString(), "Invalid Input");
                         }
                         break;
-                    case 'T':
-                        if (peek == '\n')
-                            state = 'S';
-                        else if (peek != '\0')
-                            state = 'T';
-                        else {
-                            makeError(string.toString(), "Unterminated Comment");
-                            return new Token("_UC", "Unterminated Comment", line_number);
-                        }
-                        break;
                 }
+                if (peek == '\n')
+                    line_number++;
                 if (state != '_' )
                 {
                     string.append(peek);
@@ -228,8 +224,6 @@ public class LexicalAnalyzer {
 
 
     private boolean isWhitespace (char c){
-        if (c == '\n')
-            line_number++;
         return c == '\n' || c == '\t' || c == '\f' || c == ' ' || c == '\r';
     }
 
@@ -260,7 +254,7 @@ public class LexicalAnalyzer {
     }
 
     private void makeError(String token, String msg){
-        Error error = new Error(line_number , token , msg);
+        Error error = new Error(saved_line_number , token , msg);
         errors.add(error);
     }
 
