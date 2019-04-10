@@ -10,7 +10,10 @@ int a = 0;
 	cd!e = -7;
 	}
 	else
-	{
+	{/*
+	* * / *
+	sadsad
+
 	b = a < cde;
 	{cde = @2;
 	}}
