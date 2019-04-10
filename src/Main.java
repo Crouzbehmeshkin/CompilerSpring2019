@@ -12,17 +12,19 @@ public class Main {
         LexicalAnalyzer lexer = new LexicalAnalyzer(io);
         Token token = null;
 
+        io.readInput();
+
         while(true)
         {
             token = lexer.getNextToken();
             if (token == null)
                 break;
 
-            if (token.getType()=="EOF")
-                break;
             lexer.tokens.add(token);
-            System.out.println("(" + token.getType() + " " +  token.getToken() + ")");
+            System.out.println("(" + token.getType() + ", " +  token.getToken() + ")");
 
+            if (token.getType().equals("EOF"))
+                break;
         }
 
 

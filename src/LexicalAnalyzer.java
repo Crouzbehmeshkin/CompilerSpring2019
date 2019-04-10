@@ -19,20 +19,17 @@ public class LexicalAnalyzer {
     }
 
     public Token getNextToken(){
-        io.readInput();
         Token ret = null;
         StringBuilder string = new StringBuilder();
         boolean found = false;
         while (!found)
         {
-//            System.out.println("Start Over");
-
             char state = 'A';
             while (state != '_') {
                 char peek = io.input.get(index);
-//                System.out.println(peek + " " + Character.toString(state));
                 switch (state) {
                     case 'A':
+                        string = new StringBuilder();
                         if (isDigit(peek))
                             state = 'B';
                         else if (isLetter(peek))
@@ -53,7 +50,6 @@ public class LexicalAnalyzer {
                                 makeError(string.append(peek).toString(), "Empty Table");
                             else
                                 makeError(string.append(peek).toString(), "Invalid Input");
-                            string = new StringBuilder();
                         }
                         break;
                     case 'B':
@@ -67,7 +63,6 @@ public class LexicalAnalyzer {
                                 makeError(string.append(peek).toString(), "Invalid Input");
                                 state = 'A';
                             }
-                            string = new StringBuilder();
                         }
                         break;
                     case 'C':
@@ -81,7 +76,6 @@ public class LexicalAnalyzer {
                                 makeError(string.append(peek).toString(), "invalid input");
                                 state = 'A';
                             }
-                            string = new StringBuilder();
                         }
                         break;
                     case 'D':
@@ -100,7 +94,6 @@ public class LexicalAnalyzer {
                                 makeError(string.append(peek).toString(), "Invalid Input");
                                 state = 'A';
                             }
-                            string = new StringBuilder();
                         }
                         break;
                     case 'G':
@@ -114,7 +107,6 @@ public class LexicalAnalyzer {
                                 makeError(string.append(peek).toString(), "Invalid Input");
                                 state = 'A';
                             }
-                            string = new StringBuilder();
                         }
                         break;
                     case 'H':
@@ -125,7 +117,6 @@ public class LexicalAnalyzer {
                             makeError(string.append(peek).toString(), "Invalid Input");
                             state = 'A';
                         }
-                        string = new StringBuilder();
                         break;
                     case 'J':
                         if (peek == '/')
@@ -137,7 +128,6 @@ public class LexicalAnalyzer {
                                 makeError(string.append(peek).toString(), "Empty Table");
                             else
                                 makeError(string.append(peek).toString(), "Invalid Input");
-                            string = new StringBuilder();
                             state = 'A';
                         }
                         break;
@@ -181,20 +171,13 @@ public class LexicalAnalyzer {
                             makeError(string.append(peek).toString(), "Invalid Input");
                             state = 'A';
                         }
-                        string = new StringBuilder();
                         break;
                     case 'O':
                         if (isWhitespace(peek))
                             state = 'O';
                         else {
-                            if (isValid(peek)) {
-                                ret = new Token("WHITESPACE", string.toString(), line_number);
-                                state = '_';
-                            } else {
-                                makeError(string.append(peek).toString(), "Invalid Input");
-                                state = 'A';
-                            }
-                            string = new StringBuilder();
+                            ret = new Token("WHITESPACE", string.toString(), line_number);
+                            state = '_';
                         }
                         break;
                     case 'R':
@@ -208,13 +191,15 @@ public class LexicalAnalyzer {
                         }
                         break;
                     case 'S':
-                        if (peek == '\n')
-                            state = 'S';
-                        else if (peek != '\0')
-                            state = 'T';
-                        else {
-                            makeError(string.toString(), "Unterminated Comment");
-                            return new Token("_UC", "Unterminated Comment", line_number);
+                        if (isValid(peek))
+                        {
+                            state = '_';
+                            ret = new Token("COMMENT", string.toString(), line_number);
+                        }
+                        else
+                        {
+                            state = 'A';
+                            makeError(string.toString(), "Invalid Input");
                         }
                         break;
                     case 'T':
@@ -228,25 +213,14 @@ public class LexicalAnalyzer {
                         }
                         break;
                 }
-                if (peek == '\0')
-                    return new Token("EOF", "End Of File", line_number);
-                if (state != '_')
+                if (state != '_' )
                 {
                     string.append(peek);
                     index++;
                 }
-//                else
-//                {
-////                    System.out.println("Token found");
-////                    System.out.println(ret.getType());
-//                }
             }
             if (!ret.getType().equals("WHITESPACE") && !ret.getType().equals("COMMENT"))
-            {
-                //System.out.println("BREAK");
                 found = true;
-            }
-            //System.out.println(found);
         }
         return ret;
     }
@@ -293,7 +267,7 @@ public class LexicalAnalyzer {
         PrintWriter printWriter = new PrintWriter(fileWriter);
         try{
             for (Error error : errors) {
-                //  printWriter.print( (error.getLine_number() + ".   (" +  error.getString() + "," + error.getMessage() + ")"));
+                 printWriter.print( (error.getLine_number() + ".   (" +  error.getString() + "," + error.getMessage() + ")"));
 
             }
         }
@@ -310,7 +284,7 @@ public class LexicalAnalyzer {
         try{
         for (Token token : tokens) {
                 System.out.println(   (token.getLine_number() + ".   (" +  token.getType()+ "," + token.getToken() + ")"));
-                //  printWriter.print( (token.getLine_number() + ".   (" +  token.getType()+ "," + token.getToken() + ")"));
+                printWriter.print( (token.getLine_number() + ".   (" +  token.getType()+ "," + token.getToken() + ")"));
             }
         }
         catch (Exception e){

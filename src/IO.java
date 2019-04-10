@@ -18,13 +18,13 @@ public class IO {
             int reader;
             while ((reader = r.read()) != -1) {
                 ch = (char) reader;
-                input.add( ch);
+                input.add(ch);
             }
 
         }
         catch (Exception e){
             e.printStackTrace();
         }
-
+        input.add('\0');
     }
 }
