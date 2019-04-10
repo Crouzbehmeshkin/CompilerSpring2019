@@ -10,10 +10,7 @@ int a = 0;
 	cd!e = -7;
 	}
 	else
-	{ /*
-	dsfdsfds
-	dsfds
-	*/
+	{
 	b = a < cde;
 	{cde = @2;
 	}}
