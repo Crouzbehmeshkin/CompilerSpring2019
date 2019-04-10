@@ -1,4 +1,8 @@
-8. (/*
+void main ()
+{
+// int a = 4  ;
+Int number = 7890;
+if( number ==7890){/*
 
 }
 else if(numb!er > (345* 23 ))
@@ -20,4 +24,3 @@ return a;
 
 
 }
-, Unterminated Comment)

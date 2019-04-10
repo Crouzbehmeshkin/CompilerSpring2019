@@ -10,7 +10,7 @@ public class IO {
 
         try{
 
-            InputStream in = new FileInputStream("input.txt");
+            InputStream in = new FileInputStream("input1.txt");
             Reader r = new InputStreamReader(in, "US-ASCII");
             int reader;
             while ((reader = r.read()) != -1) {
