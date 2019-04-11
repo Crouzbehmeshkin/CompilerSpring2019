@@ -21,7 +21,7 @@ public class Main {
                 break;
 
             tokens.add(token);
-            if (token.getType().equals("EOF"))
+            if (token.getType().equals("EOF") || token.getType().equals("_UC"))
                 break;
         }
 

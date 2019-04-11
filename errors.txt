@@ -1,23 +1,11 @@
-8. (/*
+10. (cd!, Invalid Input)
+13. (/*
+	* * / *
+	sadsad
 
-}
-else if(numb!er > (345* 23 ))
-{
-	a = 2;  }
-// comment
-int e2466 =0 ;
-while(true .){
-return a;
-}
+	b = a < cde;
+	{cde = @2;
+	}}
 
-
-
-
-
-
-
-
-
-
-}
-, Unterminated Comment)
+	return;
+}, Unterminated Comment)
