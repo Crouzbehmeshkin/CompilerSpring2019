@@ -9,6 +9,4 @@
 12. (KEYWORD, int) (ID, e2466) (SYMBOL, =) (NUM, 0) (SYMBOL, ;) 
 13. (KEYWORD, while) (SYMBOL, () (ID, true) (SYMBOL, )) (SYMBOL, {) 
 14. (KEYWORD, return) (ID, a) (SYMBOL, ;) 
-15. (SYMBOL, }) 
-26. (SYMBOL, }) 
-27. (EOF, End Of File) 
+15. (SYMBOL, }) (EOF, End Of File) 

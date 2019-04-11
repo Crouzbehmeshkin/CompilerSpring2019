@@ -13,14 +13,3 @@ int e2466 =0 ;
 while(true .){
 return a;
 }
-
-
-
-
-
-
-
-
-
-
-}
