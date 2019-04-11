@@ -1,2 +1,4 @@
-8. (numb!, Invalid Input)
-13. (., Invalid Input)
+4. (@, Invalid Input)
+11. ($, Invalid Input)
+15. (numb!, Invalid Input)
+20. (., Invalid Input)

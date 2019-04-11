@@ -1,9 +1,16 @@
 void main ()
 {
 // int a = 4  ;
+@2
 Int number = 7890;
-if( number ==7890){/*
-*/
+if( number ==7890){
+/*
+sadsadasd
+/*
+sadsadsa
+*/$
+
+
 }
 else if(numb!er > (345* 23 ))
 {

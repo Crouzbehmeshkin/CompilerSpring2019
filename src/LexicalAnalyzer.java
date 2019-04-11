@@ -169,13 +169,8 @@ public class LexicalAnalyzer {
                         }
                         break;
                     case 'N':
-                        if (isValid(peek)) {
-                            ret = new Token("COMMENT", string.toString(), saved_line_number);
-                            state = '_';
-                        } else {
-                            makeError(string.append(peek).toString(), "Invalid Input");
-                            state = 'A';
-                        }
+                        ret = new Token("COMMENT", string.toString(), saved_line_number);
+                        state = '_';
                         break;
                     case 'O':
                         if (isWhitespace(peek))
@@ -196,16 +191,8 @@ public class LexicalAnalyzer {
                         }
                         break;
                     case 'S':
-                        if (isValid(peek))
-                        {
-                            state = '_';
-                            ret = new Token("COMMENT", string.toString(), saved_line_number);
-                        }
-                        else
-                        {
-                            state = 'A';
-                            makeError(string.toString(), "Invalid Input");
-                        }
+                        state = '_';
+                        ret = new Token("COMMENT", string.toString(), saved_line_number);
                         break;
                 }
                 if (state != '_' )
