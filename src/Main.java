@@ -20,7 +20,11 @@ public class Main {
             if (token == null)
                 break;
 
-            tokens.add(token);
+            if (!token.getType().equals("_UC"))
+            {
+                tokens.add(token);
+            }
+
             if (token.getType().equals("EOF") || token.getType().equals("_UC"))
                 break;
         }

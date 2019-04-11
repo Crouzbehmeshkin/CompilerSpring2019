@@ -30,21 +30,23 @@ public class IO {
 
         try (Writer writers = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream("tokens.txt"), "utf-8"))) {
+            if (tokens.size() > 0)
+            {
+                int lineNumber = tokens.get(0).getLine_number();
+                writers.write(lineNumber + ". ");
 
-            int lineNumber = tokens.get(0).getLine_number();
-            writers.write(lineNumber + ". ");
+                for (Token token : tokens) {
+                    if(token.getLine_number() == lineNumber) {
+                        writers.write("(" + token.getType() + ", " + token.getToken() + ") " );
 
-            for (Token token : tokens) {
-                if(token.getLine_number() == lineNumber) {
-                    writers.write("(" + token.getType() + ", " + token.getToken() + ") " );
+                    }
+                    else{
+                        writers.write("\n");
+                        lineNumber = token.getLine_number();
+                        writers.write(lineNumber + ". ");
+                        writers.write( "(" + token.getType() + ", " + token.getToken() + ") " );
 
-                }
-                else{
-                    writers.write("\n");
-                    lineNumber = token.getLine_number();
-                    writers.write(lineNumber + ". ");
-                    writers.write( "(" + token.getType() + ", " + token.getToken() + ") " );
-
+                    }
                 }
             }
             writers.close();
@@ -60,20 +62,23 @@ public class IO {
         try(Writer errorWriter = new BufferedWriter(new OutputStreamWriter(
                 new FileOutputStream("errors.txt"), "utf-8"))){
 
-            int lineNumber = errors.get(0).getLine_number();
-            errorWriter.write(lineNumber + ". ");
-            for (Error error : errors) {
-                if(error.getLine_number() == lineNumber){
-                    errorWriter.write("(" + error.getString() + ", " + error.getMessage() + ")");
+            if (errors.size() > 0)
+            {
+                int lineNumber = errors.get(0).getLine_number();
+                errorWriter.write(lineNumber + ". ");
+                for (Error error : errors) {
+                    if(error.getLine_number() == lineNumber){
+                        errorWriter.write("(" + error.getString() + ", " + error.getMessage() + ")");
+
+                    }
+                    else {
+                        errorWriter.write("\n");
+                        lineNumber = error.getLine_number();
+                        errorWriter.write(lineNumber + ". ");
+                        errorWriter.write("(" + error.getString() + ", " + error.getMessage() + ")");
+                    }
 
                 }
-                else {
-                    errorWriter.write("\n");
-                    lineNumber = error.getLine_number();
-                    errorWriter.write(lineNumber + ". ");
-                    errorWriter.write("(" + error.getString() + ", " + error.getMessage() + ")");
-                }
-
             }
             errorWriter.close();
 

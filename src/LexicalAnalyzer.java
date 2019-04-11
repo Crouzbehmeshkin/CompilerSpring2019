@@ -208,10 +208,10 @@ public class LexicalAnalyzer {
                         }
                         break;
                 }
-                if (peek == '\n')
-                    line_number++;
                 if (state != '_' )
                 {
+                    if (peek == '\n')
+                        line_number++;
                     string.append(peek);
                     index++;
                 }
