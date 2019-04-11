@@ -1,22 +1,26 @@
-void main(void){
+void main ()
+{
+// int a = 4  ;
+Int number = 7890;
+if( number ==7890){/*
+*/
+}
+else if(numb!er > (345* 23 ))
+{
+	a = 2;  }
+// comment
+int e2466 =0 ;
+while(true .){
+return a;
+}
 
-int a = 0;
-// comment 2
-	a = 2 + +2;
-	a = a + -3;
-	cde = a;
-	if(b /*comment*/ ==3){
-	a = 3;
-	cd!e = -7;
-	}
-	else
-	{/*
-	* * / *
-	sadsad
 
-	b = a < cde;
-	{cde = @2;
-	}}
 
-	return;
+
+
+
+
+
+
+
 }
