@@ -59,26 +59,13 @@ public class LexicalAnalyzer {
                         break;
                     case 'B':
                         if (isDigit(peek))
-                            state = 'C';
+                            state = 'B';
                         else {
                             if (isValid(peek)) {
                                 ret = new Token("NUM", string.toString(), saved_line_number);
                                 state = '_';
                             } else {
                                 makeError(string.append(peek).toString(), "Invalid Input");
-                                state = 'A';
-                            }
-                        }
-                        break;
-                    case 'C':
-                        if (isDigit(peek))
-                            state = 'C';
-                        else {
-                            if (isValid(peek)) {
-                                ret = new Token("NUM", string.toString(), saved_line_number);
-                                state = '_';
-                            } else {
-                                makeError(string.append(peek).toString(), "invalid input");
                                 state = 'A';
                             }
                         }
@@ -115,13 +102,8 @@ public class LexicalAnalyzer {
                         }
                         break;
                     case 'H':
-                        if (isValid(peek)) {
-                            ret = new Token("SYMBOL", string.toString(), saved_line_number);
-                            state = '_';
-                        } else {
-                            makeError(string.append(peek).toString(), "Invalid Input");
-                            state = 'A';
-                        }
+                        ret = new Token("SYMBOL", string.toString(), saved_line_number);
+                        state = '_';
                         break;
                     case 'J':
                         if (peek == '/')
