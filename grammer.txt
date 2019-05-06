@@ -1,20 +1,36 @@
 program -> declaration-list EOF
 declaration-list -> declaration-listB
 declaration-listB -> declaration declaration-listB | ε
-declaration -> var-declaration | fun-declaration
-var-declaration -> type-specifier ID var-declarationB
+//declaration -> var-declaration | fun-declaration
+
+declaration -> type-specifier ID type
+type -> var-declarationB | ( params ) compound-stmt
+
+ //var-declaration -> type-specifier ID var-declarationB
 var-declarationB -> ; | [ NUM ] ;
 type-specifier -> int | void
-fun-declaration -> type-specifier ID ( params ) compound-stmt
-params -> param-list | void
-param-list -> param param-listB
-param-listB -> , param param-listB | ε
-param -> type-specifier ID paramB
+// fun-declaration -> type-specifier ID ( params ) compound-stmt
+//params -> param-list | void
+params -> void paramsB | int ID paramB param-listB
+paramsB -> ID paramB param-listB | ε
+
+
+//params -> void param-listC
+//param-listC ->  |ε
+//param-list -> param param-listB
+param-list -> void ID paramB param-listB | int ID paramB param-listB
+
+//param-listB -> , param param-listB | ε
+param_listB ->, void ID paramB param-listB | , int ID paramB param-listB | ε
+
+//param -> void ID paramB|int ID paramB
+
 paramB -> [ ] | ε
 compound-stmt -> { declaration-list statement-list }
 statement-list -> statement-listB
 statement-listB -> statement statement-listB | ε
 statement -> expression-stmt | compound-stmt | selection-stmt | iteration-stmt | return-stmt | switch-stmt
+
 expression-stmt -> expression ; | continue ; | break ; | ;
 selection-stmt -> if ( expression ) statement else statement
 iteration-stmt -> while ( expression ) statement
@@ -25,6 +41,7 @@ case-stmts -> case-stmtsB
 case-stmtsB -> case-stmt case-stmtsB | ε
 case-stmt -> case NUM : statement-list
 default-stmt -> default : statement-list | ε
+
 expression -> var = expression | simple-expression
 var -> ID varB
 varB -> [ expression ] | ε
@@ -37,7 +54,10 @@ addop->+|-
 term -> signed-factor termB
 termB -> * signed-factor termB | ε
 signed-factor -> factor | + factor | - factor
-factor -> ( expression ) | var | call | NUM
+//factor -> ( expression ) | var | call | NUM
+factor -> ( expression )  | NUM | ID factorA
+factorA -> varB | (args)
+
 call -> ID(args)
 args -> arg-list | ε
 arg-list -> expression arg-listB
@@ -69,6 +89,8 @@ param-listB -> ε
 param -> type-specifier ID paramB
 paramB -> [ ]
 paramB -> ε
+
+
 
 compound-stmt -> { declaration-list statement-list }
 
