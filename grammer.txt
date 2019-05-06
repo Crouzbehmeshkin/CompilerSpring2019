@@ -6,10 +6,9 @@ var-declaration -> type-specifier ID var-declarationB
 var-declarationB -> ; | [ NUM ] ;
 type-specifier -> int | void
 fun-declaration -> type-specifier ID ( params ) compound-stmt
-params -> param-list | void
-param-list -> param param-listB
+params -> void paramsB | int ID paramB param-listB
+paramsB -> ID paramB param-listB | ε
 param-listB -> , param param-listB | ε
-param -> type-specifier ID paramB
 paramB -> [ ] | ε
 compound-stmt -> { declaration-list statement-list }
 statement-list -> statement-listB
@@ -138,6 +137,119 @@ call -> ID ( args )
 args -> arg-list
 args -> ε
 
+arg-list -> expression arg-listB
+arg-listB -> , expression arg-listB
+arg-listB -> ε
+
+----------------
+
+program -> declaration-list EOF
+declaration-list -> declaration-listB
+declaration-listB -> declaration declaration-listB
+declaration-listB -> ε
+
+declaration -> type-specifier ID type
+type -> var-declarationB
+type -> ( params ) compound - stmt
+
+var-declaration -> type-specifier ID var-declarationB
+var-declarationB -> ;
+var-declarationB -> [ NUM ] ;
+
+type-specifier -> int
+type-specifier -> void
+fun-declaration -> type-specifier ID ( params ) compound-stmt
+params -> void paramsB
+params -> int ID paramB param-listB
+paramsB -> ID paramB param-listB
+paramsB -> ε
+
+param-list -> int ID paramB param-listB
+param-list -> void ID paramB param-listB
+param-listB -> , param param-listB
+param-listB -> , param param-listB
+param-listB -> ε
+
+param -> int ID paramB
+param -> void ID paramB
+paramB -> [ ]
+paramB -> ε
+
+compound-stmt -> { declaration-list statement-list }
+
+statement-list -> statement-listB
+statement-listB -> statement statement-listB
+statement-listB -> ε
+
+statement -> expression-stmt
+statement -> compound-stmt
+statement -> selection-stmt
+statement -> iteration-stmt
+statement -> return-stmt
+statement -> switch-stmt
+
+expression-stmt -> expression ;
+expression-stmt -> continue ;
+expression-stmt -> break ;
+expression-stmt -> ;
+selection-stmt -> if ( expression ) statement else statement
+iteration-stmt -> while ( expression ) statement
+return-stmt -> return return-stmtB
+return-stmtB -> ;
+return-stmtB -> expression ;
+
+switch-stmt -> switch ( expression ) { case-stmts default-stmt }
+
+case-stmts -> case-stmtsB
+case-stmtsB -> case-stmt case-stmtsB
+case-stmtsB -> ε
+
+case-stmt -> case NUM : statement-list
+default-stmt -> default : statement-list
+default-stmt -> ε
+expression -> ID expressionB
+expression -> signed-factorA termB additive-expressionB simple-expressionB
+expressionB -> varB = expression
+expressionB -> factorB termB additive-expressionB simple-expressionB
+expression -> signed-factorA termB additive-expressionB
+varB -> [ expression ]
+varB -> ε
+
+simple-expression -> ID factorB termB additive-expressionB simple-expressionB
+simple-expression -> signed-factorA termB additive-expressionB simple-expressionB
+simple-expressionB -> relop additive-expression
+simple-expressionB -> ε
+
+relop -> <
+relop -> ==
+additive-expression -> ID factorB termB additive-expressionB
+additive-expression -> signed-factorA termB additive-expressionB
+additive-expressionB -> addop term additive-expressionB
+additive-expressionB -> ε
+
+addop -> +
+addop -> -
+
+term -> ID factorB termB
+term ->  signed-factorA termB
+termB -> * signed-factor termB
+termB -> ε
+
+signed-factor -> ID factorB
+signed-factor -> signed-factorA
+signed-factorA -> factorA
+signed-factorA -> + factor
+signed-factorA -> - factor
+
+factor -> ID factorB
+factor -> factorA
+factorA -> ( expression )
+factorA -> NUM
+factorB -> varB
+factorB -> (args)
+
+args -> arg-list
+args -> ε
 arg-list -> expression arg-listB
 arg-listB -> , expression arg-listB
 arg-listB -> ε
