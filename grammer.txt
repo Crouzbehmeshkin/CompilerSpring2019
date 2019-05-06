@@ -209,9 +209,10 @@ default-stmt -> default : statement-list
 default-stmt -> ε
 expression -> ID expressionB
 expression -> signed-factorA termB additive-expressionB simple-expressionB
-expressionB -> varB = expression
-expressionB -> factorB termB additive-expressionB simple-expressionB
-expression -> signed-factorA termB additive-expressionB
+expressionB -> varB expressionC
+expressionB -> ( args ) termB additive-expressionB simple-expressionB
+expressionC -> = expression
+expressionC -> termB additive-expressionB simple-expressionB
 varB -> [ expression ]
 varB -> ε
 
@@ -246,7 +247,7 @@ factor -> factorA
 factorA -> ( expression )
 factorA -> NUM
 factorB -> varB
-factorB -> (args)
+factorB -> ( args )
 
 args -> arg-list
 args -> ε
