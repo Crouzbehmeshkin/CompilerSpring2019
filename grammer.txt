@@ -150,7 +150,7 @@ declaration-listB -> ε
 
 declaration -> type-specifier ID type
 type -> var-declarationB
-type -> ( params ) compound - stmt
+type -> ( params ) compound-stmt
 
 var-declaration -> type-specifier ID var-declarationB
 var-declarationB -> ;
@@ -158,7 +158,7 @@ var-declarationB -> [ NUM ] ;
 
 type-specifier -> int
 type-specifier -> void
-fun-declaration -> type-specifier ID ( params ) compound-stmt
+
 params -> void paramsB
 params -> int ID paramB param-listB
 paramsB -> ID paramB param-listB
@@ -166,7 +166,6 @@ paramsB -> ε
 
 param-list -> int ID paramB param-listB
 param-list -> void ID paramB param-listB
-param-listB -> , param param-listB
 param-listB -> , param param-listB
 param-listB -> ε
 
