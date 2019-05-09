@@ -5,18 +5,17 @@ import java.util.ArrayList;
 
 public class Parser {
     private ArrayList<Node> nodes = new ArrayList<>();
+    private IO io;
 
-    public Parser()
+    public Parser(IO io)
     {
         init_nodes();
+        this.io = io;
     }
 
     private void init_nodes()
     {
-        Node node = new Node();
-        nodes.add(node);
-        node = new Node();
-
+        nodes = io.readTransitionGraph();
     }
 
     HashMap<String , ArrayList> firstSets = new HashMap<>();

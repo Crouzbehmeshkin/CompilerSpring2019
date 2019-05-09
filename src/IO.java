@@ -88,4 +88,12 @@ public class IO {
             e.printStackTrace();
         }
     }
+
+    public ArrayList<Node> readTransitionGraph()
+    {
+        ArrayList<Node> nodes = new ArrayList<>();
+        Node node = new Node();
+
+        return nodes;
+    }
 }
