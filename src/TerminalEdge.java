@@ -1,4 +1,4 @@
-public class TerminalEdge {
+public class TerminalEdge extends Edge {
     private Token matchingToken;
 
 }

@@ -1,7 +1,15 @@
 import java.util.ArrayList;
 
 public class Node {
+    private ArrayList<Edge> edges = new ArrayList<>();
+    public boolean is_starting;
+    public boolean is_returning;
 
-    private ArrayList<Edge> edges= new ArrayList<>();
+    public void setEdges(ArrayList<Edge> edges) {
+        this.edges = edges;
+    }
 
+    public ArrayList<Edge> getEdges() {
+        return edges;
+    }
 }

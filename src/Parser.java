@@ -1,7 +1,23 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
+import java.util.ArrayList;
+
 public class Parser {
+    private ArrayList<Node> nodes = new ArrayList<>();
+
+    public Parser()
+    {
+        init_nodes();
+    }
+
+    private void init_nodes()
+    {
+        Node node = new Node();
+        nodes.add(node);
+        node = new Node();
+
+    }
 
     HashMap<String , ArrayList> firstSets = new HashMap<>();
     HashMap<String , ArrayList> followSets = new HashMap<>();
