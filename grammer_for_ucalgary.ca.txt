@@ -1,0 +1,90 @@
+﻿Program →	Declarationlist eof.
+Declarationlist →	DeclarationlistB.
+DeclarationlistB →	Declaration DeclarationlistB
+|	.
+Declaration →	Typespecifier id Type.
+Type →	VardeclarationB
+|	( Params ) Compoundstmt.
+Vardeclaration →	Typespecifier id VardeclarationB.
+VardeclarationB →	;
+|	openbracket num closebracket ;.
+Typespecifier →	int
+|	void.
+Params →	void ParamsB
+|	int id ParamB ParamlistB.
+ParamsB →	id ParamB ParamlistB
+|	.
+Paramlist →	int id ParamB ParamlistB
+|	void id ParamB ParamlistB.
+ParamlistB →	comma Param ParamlistB
+|	.
+Param →	int id ParamB
+|	void id ParamB.
+ParamB →	openbracket closebracket
+|	.
+Compoundstmt →	opencurly Declarationlist Statementlist closecurley.
+Statementlist →	StatementlistB.
+StatementlistB →	Statement StatementlistB
+|	.
+Statement →	Expressionstmt
+|	Compoundstmt
+|	Selectionstmt
+|	Iterationstmt
+|	Returnstmt
+|	Switchstmt.
+Expressionstmt →	Expression ;
+|	continue ;
+|	break ;
+|	;.
+Selectionstmt →	if ( Expression ) Statement else Statement.
+Iterationstmt →	while ( Expression ) Statement.
+Returnstmt →	return ReturnstmtB.
+ReturnstmtB →	;
+|	Expression ;.
+Switchstmt →	switch ( Expression ) opencurley Casestmts Defaultstmt closecurley.
+Casestmts →	CasestmtsB.
+CasestmtsB →	Casestmt CasestmtsB
+|	.
+Casestmt →	case num : Statementlist.
+Defaultstmt →	default : Statementlist
+|	.
+Expression →	id ExpressionB
+|	SignedfactorA TermB AdditiveexpressionB SimpleexpressionB.
+ExpressionB →	VarB ExpressionC
+|	( Args ) TermB AdditiveexpressionB SimpleexpressionB.
+ExpressionC →	setto Expression
+|	TermB AdditiveexpressionB SimpleexpressionB.
+VarB →	openbracket Expression closebracket
+|	.
+Simpleexpression →	id FactorB TermB AdditiveexpressionB SimpleexpressionB
+|	SignedfactorA TermB AdditiveexpressionB SimpleexpressionB.
+SimpleexpressionB →	Relop Additiveexpression
+|	.
+Relop →	lessthan
+|	equals.
+Additiveexpression →	id FactorB TermB AdditiveexpressionB
+|	SignedfactorA TermB AdditiveexpressionB.
+AdditiveexpressionB →	Addop Term AdditiveexpressionB
+|	.
+Addop →	plus
+|	minus.
+Term →	id FactorB TermB
+|	SignedfactorA TermB.
+TermB →	* Signedfactor TermB
+|	.
+Signedfactor →	id FactorB
+|	SignedfactorA.
+SignedfactorA →	FactorA
+|	plus Factor
+|	minus Factor.
+Factor →	id FactorB
+|	FactorA.
+FactorA →	( Expression )
+|	num.
+FactorB →	VarB
+|	( Args ).
+Args →	Arglist
+|	.
+Arglist →	Expression ArglistB.
+ArglistB →	comma Expression ArglistB
+|	.
