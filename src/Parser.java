@@ -1,3 +1,4 @@
+import java.security.PrivateKey;
 import java.util.ArrayList;
 import java.util.HashMap;
 
@@ -6,11 +7,15 @@ import java.util.ArrayList;
 public class Parser {
     private ArrayList<Node> nodes = new ArrayList<>();
     private IO io;
+    private LexicalAnalyzer lexer;
 
-    public Parser(IO io)
+    public Parser(IO io, LexicalAnalyzer lexer)
     {
-        init_nodes();
         this.io = io;
+        this.lexer = lexer;
+        init_nodes();
+        addToHashMaps();
+        parseCode();
     }
 
     private void init_nodes()
@@ -232,5 +237,34 @@ public class Parser {
     public void addToHashMaps(){
         addToFirstSet(firstSets);
         addToFollowSets(followSets);
+    }
+
+    private void parseCode()
+    {
+        int state = 1;
+        while (state != 3)
+        {
+            Token peek  = lexer.getNextToken();
+            Node currentNode = nodes.get(state);
+            ArrayList<Edge> edges = currentNode.getEdges();
+            int nextstate = 0;
+            for (int i = 0 ; i < edges.size(); i++)
+            {
+                Edge edge = edges.get(i);
+                if (edge instanceof TerminalEdge)
+                {
+                    TerminalEdge tedge = (TerminalEdge)edge;
+
+                    if (peek.getType().equals(tedge.getToken().getType()))
+                    {
+
+                    }
+                }
+                else
+                {
+
+                }
+            }
+        }
     }
 }
