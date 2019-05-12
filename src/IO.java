@@ -91,8 +91,33 @@ public class IO {
 
     public ArrayList<Node> readTransitionGraph()
     {
+       // String line ;
         ArrayList<Node> nodes = new ArrayList<>();
-        Node node = new Node();
+
+        try{
+//            InputStream transitionRead = new FileInputStream("TransitionGraph.txt");
+//            Reader read = new InputStreamReader(transitionRead, "US-ASCII");
+//            int reader ;
+            File file = new File("TransitionGraph.txt");
+            FileReader fileReader = new FileReader(file);
+            BufferedReader bufferedReader = new BufferedReader(fileReader);
+            StringBuffer stringBuffer = new StringBuffer();
+            String line;
+            while ((line = bufferedReader.readLine()) != null) {
+                stringBuffer.append(line);
+                Node node = new Node();
+
+                if(line.startsWith())
+
+                stringBuffer.append("\n");
+
+            }
+
+
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
 
         return nodes;
     }

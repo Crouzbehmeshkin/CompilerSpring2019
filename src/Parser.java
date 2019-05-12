@@ -21,7 +21,7 @@ public class Parser {
     HashMap<String , ArrayList> firstSets = new HashMap<>();
     HashMap<String , ArrayList> followSets = new HashMap<>();
 
-    public  void addToFisrtSet( HashMap<String , ArrayList> firstSets  ){
+    public  void addToFirstSet( HashMap<String , ArrayList> firstSets  ){
 
         ArrayList<String> first = new ArrayList<>();
        first.add("EOF");first.add("int"); first.add("void");
@@ -230,7 +230,7 @@ public class Parser {
     }
 
     public void addToHashMaps(){
-        addToFisrtSet(firstSets);
+        addToFirstSet(firstSets);
         addToFollowSets(followSets);
     }
 }
