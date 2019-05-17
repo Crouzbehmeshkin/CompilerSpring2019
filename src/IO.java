@@ -1,5 +1,7 @@
 import java.io.*;
 import java.util.ArrayList;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 public class IO {
 
@@ -104,13 +106,76 @@ public class IO {
             StringBuffer stringBuffer = new StringBuffer();
             String line;
             while ((line = bufferedReader.readLine()) != null) {
-                stringBuffer.append(line);
-                Node node = new Node();
 
-                if(line.startsWith())
+                Node newNode = new Node();
+                ArrayList<Edge> edges = new ArrayList<>();
+                newNode.setEdges(edges);
+
+                stringBuffer.append(line);
+
+                String terminalPattern = "(.*)(T,(.*))";
+                String nonTerminalPattern = "(.*)(NT,(.*))";
+
+                Pattern tPattern = Pattern.compile(terminalPattern);
+                Pattern nonTPattern = Pattern.compile(nonTerminalPattern);
+
+                String[] split ;
+                split = line.split("\\|");
+
+                String[] s = split[0].split("\\(");
+                String []s1 = s[1].split(",");
+                String[] s2 = s1[1].split("\\)");
+
+                if(s1[0] .equals("0"))
+                    newNode.is_starting = false;
+                else
+                    newNode.is_starting = true;
+
+                if(s2[0] .equals("0"))
+                    newNode.is_returning = false;
+                else
+                    newNode.is_returning = true;
+
+
+
+                for (int i = 1; i <split.length ; i++) {
+
+                    Matcher tm = tPattern.matcher(split[i]);
+                    Matcher nonTM = nonTPattern.matcher(split[i]);
+
+                    if(tm.find()){
+                        String[] edgeSplit;
+                        edgeSplit = split[i].split(",");
+                        String[] resultNode = edgeSplit[3].split("\\)");
+                        Token newToken = new Token(edgeSplit[1] , edgeSplit[2] , 0);
+                        TerminalEdge newTerminalEdge = new TerminalEdge(Integer.parseInt(resultNode[0]) , newToken);
+                        newNode.getEdges().add(newTerminalEdge);
+
+
+                    }
+
+                    else if(nonTM.find()){
+                        String[] edgeSplit ;
+                        edgeSplit = split[i].split(",");
+                        String[] returnNode = edgeSplit[3].split("\\)");
+                        NonTerminalEdge newNonTerminalEdge = new NonTerminalEdge(Integer.parseInt(edgeSplit[2]) ,Integer.parseInt(returnNode[0]) , edgeSplit[1] );
+                        newNode.getEdges().add(newNonTerminalEdge);
+
+                    }
+
+                    else{
+                        System.out.println("no match found");
+                    }
+
+
+
+                }
+
+
+
 
                 stringBuffer.append("\n");
-
+                nodes.add(newNode);
             }
 
 
