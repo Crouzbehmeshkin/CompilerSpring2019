@@ -13,25 +13,10 @@ public class Main {
         Token token = null;
         io.readInput();
 
-        ArrayList<Token> tokens = new ArrayList<>();
+        parser.parseCode();
 
-        while(true)
-        {
-            token = lexer.getNextToken();
-            if (token == null)
-                break;
-
-            if (!token.getType().equals("_UC"))
-            {
-                tokens.add(token);
-            }
-
-            if (token.getType().equals("EOF") || token.getType().equals("_UC"))
-                break;
-        }
-
-        io.printTokens(tokens);
-        io.printErrors(lexer.getErrors());
+        //io.printTokens(tokens);
+        io.printErrors(ErrorManager.errors);
 
     }
 }

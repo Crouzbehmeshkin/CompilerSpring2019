@@ -107,7 +107,7 @@ public class IO {
                 stringBuffer.append(line);
                 Node node = new Node();
 
-                if(line.startsWith())
+                //if(line.startsWith())
 
                 stringBuffer.append("\n");
 
@@ -120,5 +120,44 @@ public class IO {
         }
 
         return nodes;
+    }
+
+    BufferedWriter parseTreeWriter;
+    public void openParseTreeFile()
+    {
+        try
+        {
+            parseTreeWriter = new BufferedWriter(new FileWriter("parse_tree.txt"));
+
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void writeParseTreeNode(int depth, String node_string)
+    {
+        try
+        {
+            StringBuilder sb = new StringBuilder();
+            for (int i = 0 ; i < depth; i++)
+                sb.append('\t');
+            sb.append(node_string);
+            parseTreeWriter.write(sb.toString());
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+
+    public void closeParseTreeFile()
+    {
+        try {
+            parseTreeWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
     }
 }

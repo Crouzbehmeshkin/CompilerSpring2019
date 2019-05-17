@@ -339,11 +339,13 @@ public class Parser {
         addToFollowSets(followSets);
     }
 
-    private void parseCode() {
+    public void parseCode() {
         int state = 1;
         ArrayList<Integer> stack = new ArrayList<>();
         ArrayList<String> currentNonTerminals = new ArrayList<>();
         currentNonTerminals.add("program");
+
+        io.openParseTreeFile();
 
         while (state != 3) {
             Token peek = lexer.getNextToken();
@@ -358,6 +360,7 @@ public class Parser {
                 state = stack.get(stack.size() - 1);
                 stack.remove(stack.size() - 1);
                 currentNonTerminals.remove(currentNonTerminals.size() - 1);
+                io.writeParseTreeNode(stack.size(), current_nt);
                 continue;
             }
             for (int i = 0; i < edges.size(); i++) {
@@ -389,14 +392,17 @@ public class Parser {
                     }
                     if (t_edge.getToken().getType().equals(peek.getType()))
                     {
-                        if (t_edge.getToken().getString().equals("*"))
+                        // terminal edge. not epsilon
+                        if (t_edge.getToken().getString().equals("*") || t_edge.getToken().getType().equals("EOF"))
                         {
                             nextstate = t_edge.getResultingNode();
+                            io.writeParseTreeNode(stack.size(), t_edge.getToken().getType());
                             break;
                         }
                         else if (t_edge.getToken().getString().equals(peek.getString()))
                         {
                             nextstate = t_edge.getResultingNode();
+                            io.writeParseTreeNode(stack.size(), t_edge.getToken().getString());
                             break;
                         }
 
@@ -412,6 +418,7 @@ public class Parser {
                             if (terminal_name.equals("End Of File"))
                             {
                                 makeError(line_no, "Malformed Input");
+                                io.closeParseTreeFile();
                                 return;
                             }
                             makeError(line_no, "Missing " + terminal_name);
@@ -446,6 +453,7 @@ public class Parser {
                         if (terminal_name.equals("End Of File"))
                         {
                             makeError(line_no, "Unexpected EndOfFile");
+                            io.closeParseTreeFile();
                             return;
                         }
                         if (edge_follow_set.contains(terminal_name))
@@ -463,6 +471,7 @@ public class Parser {
             }
             state = nextstate;
         }
+        io.closeParseTreeFile();
     }
 
 
