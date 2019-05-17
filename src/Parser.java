@@ -8,11 +8,12 @@ public class Parser {
     private ArrayList<Node> nodes = new ArrayList<>();
     private IO io;
     private LexicalAnalyzer lexer;
+    private ArrayList<Error> errors;
 
-    public Parser(IO io, LexicalAnalyzer lexer)
-    {
+    public Parser(IO io, LexicalAnalyzer lexer) {
         this.io = io;
         this.lexer = lexer;
+        errors = ErrorManager.errors;
         init_nodes();
         addToHashMaps();
         parseCode();
@@ -338,32 +339,167 @@ public class Parser {
         addToFollowSets(followSets);
     }
 
-    private void parseCode()
-    {
+    public void parseCode() {
         int state = 1;
-        while (state != 3)
-        {
-            Token peek  = lexer.getNextToken();
+        ArrayList<Integer> stack = new ArrayList<>();
+        ArrayList<String> currentNonTerminals = new ArrayList<>();
+        currentNonTerminals.add("program");
+
+        io.openParseTreeFile();
+
+        while (state != 3) {
+            Token peek = lexer.getNextToken();
+            int line_no = lexer.getSaved_line_number();
             Node currentNode = nodes.get(state);
             ArrayList<Edge> edges = currentNode.getEdges();
+            String current_nt = currentNonTerminals.get(currentNonTerminals.size() - 1);
             int nextstate = 0;
-            for (int i = 0 ; i < edges.size(); i++)
-            {
+
+            // reaching an ending node. so should return
+            if (edges.size() == 0) {
+                state = stack.get(stack.size() - 1);
+                stack.remove(stack.size() - 1);
+                currentNonTerminals.remove(currentNonTerminals.size() - 1);
+                io.writeParseTreeNode(stack.size(), current_nt);
+                continue;
+            }
+            for (int i = 0; i < edges.size(); i++) {
                 Edge edge = edges.get(i);
-                if (edge instanceof TerminalEdge)
-                {
-                    TerminalEdge tedge = (TerminalEdge)edge;
+                if (edge instanceof TerminalEdge) {
+                    // if edge was a terminal
+                    TerminalEdge t_edge = (TerminalEdge) edge;
 
-                    if (peek.getType().equals(tedge.getToken().getType()))
+                    if (t_edge.getToken().getType().equals("epsilon"))
                     {
+                        // epsilon edge handling
+                        ArrayList nt_follow_set = followSets.get(current_nt);
+                        if (peek.getType().equals("NUM") || peek.getType().equals("ID") || peek.getType().equals("EOF"))
+                        {
+                            if (nt_follow_set.contains(peek.getType()))
+                            {
+                                nextstate = t_edge.getResultingNode();
+                                break;
+                            }
+                        }
+                        else
+                        {
+                            if (nt_follow_set.contains(peek.getString()))
+                            {
+                                nextstate = t_edge.getResultingNode();
+                                break;
+                            }
+                        }
+                    }
+                    if (t_edge.getToken().getType().equals(peek.getType()))
+                    {
+                        // terminal edge. not epsilon
+                        if (t_edge.getToken().getString().equals("*") || t_edge.getToken().getType().equals("EOF"))
+                        {
+                            nextstate = t_edge.getResultingNode();
+                            io.writeParseTreeNode(stack.size(), t_edge.getToken().getType());
+                            break;
+                        }
+                        else if (t_edge.getToken().getString().equals(peek.getString()))
+                        {
+                            nextstate = t_edge.getResultingNode();
+                            io.writeParseTreeNode(stack.size(), t_edge.getToken().getString());
+                            break;
+                        }
 
+                        // error handling for terminals:
+                        if (edges.size() == 1 && nextstate == 0)
+                        {
+                            String terminal_name;
+                            if (t_edge.getToken().getType().equals("ID") || t_edge.getToken().getType().equals("NUM"))
+                                terminal_name = t_edge.getToken().getType();
+                            else
+                                terminal_name = t_edge.getToken().getString();
+
+                            if (terminal_name.equals("End Of File"))
+                            {
+                                makeError(line_no, "Malformed Input");
+                                io.closeParseTreeFile();
+                                return;
+                            }
+                            makeError(line_no, "Missing " + terminal_name);
+                            nextstate = t_edge.getResultingNode();
+                        }
                     }
                 }
                 else
                 {
+                    // if edge was nonTerminal. checking its first and follow sets for a match
+                    NonTerminalEdge nt_edge = (NonTerminalEdge) edge;
+                    String nt_edge_string = nt_edge.getString();
 
+                    ArrayList edge_first_set = firstSets.get(nt_edge_string);
+                    nextstate = getNextState(edge_first_set, nt_edge, stack, peek, currentNonTerminals);
+
+                    ArrayList edge_follow_set = followSets.get(nt_edge_string);
+                    if (edge_first_set.contains("epsilon"))
+                    {
+                        nextstate = getNextState(edge_follow_set, nt_edge, stack, peek, currentNonTerminals);
+                    }
+
+                    // handling nonTerminal errors
+                    if (edges.size() == 1 && nextstate == 0)
+                    {
+                        String terminal_name;
+                        if (peek.getType().equals("ID") || peek.getType().equals("NUM"))
+                            terminal_name = peek.getType();
+                        else
+                            terminal_name = peek.getString();
+
+                        if (terminal_name.equals("End Of File"))
+                        {
+                            makeError(line_no, "Unexpected EndOfFile");
+                            io.closeParseTreeFile();
+                            return;
+                        }
+                        if (edge_follow_set.contains(terminal_name))
+                        {
+                            nextstate = nt_edge.getReturningNode();
+                            makeError(line_no, "Missing " + nt_edge_string);
+                        }
+                        else
+                        {
+                            makeError(line_no, "Unexpected " + terminal_name);
+                            nextstate = state;
+                        }
+                    }
+                }
+            }
+            state = nextstate;
+        }
+        io.closeParseTreeFile();
+    }
+
+
+    private int getNextState(ArrayList set, NonTerminalEdge nt_edge, ArrayList<Integer> stack, Token peek, ArrayList<String> cNT) {
+        int nextstate = 0;
+        for (int j = 0; j < set.size(); j++) {
+            if (set.get(j).equals("NUM") || set.get(j).equals("ID")) {
+                if (peek.getType().equals(set.get(j))) {
+                    nextstate = nt_edge.getResultingNode();
+                    stack.add(nt_edge.getReturningNode());
+                    cNT.add(nt_edge.getString());
+                    return nextstate;
+                }
+            } else {
+                if (peek.getString().equals(set.get(j))) {
+                    nextstate = nt_edge.getResultingNode();
+                    stack.add(nt_edge.getReturningNode());
+                    cNT.add(nt_edge.getString());
+                    return nextstate;
                 }
             }
         }
+        return nextstate;
+    }
+
+    private void makeError(int line_no, String message)
+    {
+        Error error = new Error(line_no, "SYNTAX ERROR!", message);
+        errors.add(error);
     }
 }

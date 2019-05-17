@@ -4,4 +4,9 @@ public class Edge {
     {
         this.resultingNode = resultingNode;
     }
+
+    public int getResultingNode()
+    {
+        return resultingNode;
+    }
 }
