@@ -216,87 +216,118 @@ public class Parser {
         ArrayList<String> follow2= new ArrayList<>();
         follow2.add("ID");
         followSets.put("type-specifier" , follow2);
-        follow2.clear();
-        follow2.add("(");
-        followSets.put("params" , follow2);
-        followSets.put("paramsB" , follow2);
-        followSets.put("param-listB" , follow2);
-        follow2.add(",");
-        followSets.put("param" , follow2);
-        followSets.put("paramB" , follow2);
-
-
-        follow.remove("EOF"); follow.add("else");
-        follow.add("default"); follow.add("case");
-        followSets.put("compound-stmt" , follow);
-        followSets.put("statement" , follow);
-        followSets.put("expression-stmt" , follow);
-        followSets.put("selection-stmt" , follow);
-        followSets.put("iteration-stmt" , follow);
-        followSets.put("return-stmt" , follow);
-        followSets.put("return-stmtB" , follow);
-        followSets.put("switch-stmt" , follow);
 
         ArrayList<String> follow3= new ArrayList<>();
-        follow3.add("default"); follow3.add(",");
-        followSets.put("case-stmts" , follow3);
-        followSets.put("case-stmtsB" , follow3);
-        follow3.add("case");
-        followSets.put("case-stmt" , follow3);
-
-        follow3.clear();
-        follow3.add("}");
-        followSets.put("default-stmt" , follow3);
-
-        follow3.clear();
-        follow3.add(";") ; follow3.add(")") ; follow3.add("]"); follow3.add(",");
-        followSets.put("expression" , follow3);
-        followSets.put("expressionB" , follow3);
-        followSets.put("expressionC" , follow3);
-        followSets.put("simple-expressionB" , follow3);
-        followSets.put("addictive-expression" , follow3);
-
-        follow3.clear();
-        follow3.add("="); follow3.add("*"); follow3.add("+") ; follow3.add("-");
-        follow3.add("<"); follow3.add("==") ; follow3.add(";"); follow3.add(")");
-        follow3.add("]"); follow3.add(",");
-        followSets.put("varB" , follow3);
+        follow3.add("(");
+        followSets.put("params" , follow3);
+        followSets.put("paramsB" , follow3);
+        followSets.put("param-listB" , follow3);
 
         ArrayList<String> follow4= new ArrayList<>();
-        follow4.add("ID"); follow4.add("+") ; follow4.add("-") ; follow4.add("(");
-        follow4.add("NUM");
-        followSets.put("relop" , follow4);
+        follow4.add("("); follow4.add(",");
+        followSets.put("param" , follow4);
+        followSets.put("paramB" , follow4);
 
-        follow4.clear();
-        follow4.add("<"); follow4.add("==") ; follow4.add(";") ; follow4.add(")");
-        follow4.add("]"); follow4.add(",");
-        followSets.put("addictive-expressionB" , follow4);
 
-        follow4.clear();
-        follow4.add("ID"); follow4.add("+"); follow4.add("-"); follow4.add("(");
-        follow4.add("NUM");
-        followSets.put("addop" , follow4);
+        ArrayList<String> follow5= new ArrayList<>();
+        follow5.add("int"); follow5.add("void");follow5.add("EOF");
+        follow5.add("{"); follow5.add("continue"); follow5.add("break");
+        follow5.add(";"); follow5.add("if"); follow5.add("while");follow5.add("return");
+        follow5.add("switch"); follow5.add("ID") ; follow5.add("+"); follow5.add("-");
+        follow5.add("("); follow5.add("NUM"); follow5.add("}");
+        follow5.add("default"); follow5.add("case"); follow5.add("else");
+        followSets.put("compound-stmt" , follow5);
 
-        follow4.clear();
-        follow4.add("+"); follow4.add("-") ; follow4.add("<");
-        follow4.add("=="); follow4.add(";") ; follow4.add(")"); follow4.add("]");
-        follow4.add(",");
-        followSets.put("term" , follow4);
-        followSets.put("termB" , follow4);
+        ArrayList<String> follow6= new ArrayList<>();
+        follow6.add("}");   follow6.add("case");    follow6.add("default");
+        followSets.put("statement-list" , follow6);
+        followSets.put("statement-listB" , follow6);
 
-        follow4.add("*");
 
-        followSets.put("signed-factor" , follow4);
-        followSets.put("signed-factorA" , follow4);
-        followSets.put("factor" , follow4);
-        followSets.put("factorA" , follow4);
-        followSets.put("factorB" , follow4);
+        ArrayList<String> follow7= new ArrayList<>();
+        follow7.add("{");   follow7.add("continue");    follow7.add("break"); follow7.add(";");
+        follow7.add("if"); follow7.add("while"); follow7.add("return"); follow7.add("switch");
+        follow7.add("ID");  follow7.add("+"); follow7.add("-"); follow7.add("(");
+        follow7.add("NUM"); follow7.add("}"); follow7.add("else"); follow7.add("case");
+        follow7.add("default");
+        followSets.put("statement" , follow7);
+        followSets.put("expression-stmt" , follow7);
+        followSets.put("selection-stmt" , follow7);
+        followSets.put("iteration-stmt" , follow7);
+        followSets.put("return-stmt" , follow7);
+        followSets.put("return-stmtB" , follow7);
+        followSets.put("switch-stmt" , follow7);
 
-        follow1.clear();
-        follow1.add(")");
-        followSets.put("args" , follow1);
-        followSets.put("arg-list" , follow1);
-        followSets.put("arg-listB" , follow1);
+        ArrayList<String> follow8= new ArrayList<>();
+        follow8.add("default"); follow8.add("}");
+        followSets.put("case-stmts" , follow8);
+        followSets.put("case-stmtsB" , follow8);
+
+        ArrayList<String> follow9= new ArrayList<>();
+        follow9.add("default"); follow9.add("}"); follow9.add("case");
+        followSets.put("case-stmt" , follow9);
+
+
+        ArrayList<String> follow10= new ArrayList<>();
+        follow10.add("}");
+        followSets.put("default-stmt" , follow10);
+
+
+        ArrayList<String> follow11= new ArrayList<>();
+        follow11.add(";") ; follow11.add(")") ; follow11.add("]"); follow11.add(",");
+        followSets.put("expression" , follow11);
+        followSets.put("expressionB" , follow11);
+        followSets.put("expressionC" , follow11);
+        followSets.put("simple-expressionB" , follow11);
+        followSets.put("addictive-expression" , follow11);
+
+
+
+        ArrayList<String> follow12= new ArrayList<>();
+        follow12.add("=");   follow12.add("*"); follow12.add("+") ; follow12.add("-");
+        follow12.add("<"); follow12.add("==") ; follow12.add(";"); follow12.add(")");
+        follow12.add("]"); follow12.add(",");
+        followSets.put("varB" , follow12);
+
+        ArrayList<String> follow13= new ArrayList<>();
+        follow13.add("ID"); follow13.add("+") ; follow13.add("-") ; follow13.add("(");
+        follow13.add("NUM");
+        followSets.put("relop" , follow13);
+
+        ArrayList<String> follow14= new ArrayList<>();
+        follow14.add("<"); follow14.add("==") ; follow14.add(";") ; follow14.add(")");
+        follow14.add("]"); follow14.add(",");
+        followSets.put("addictive-expressionB" , follow14);
+
+        ArrayList<String> follow15= new ArrayList<>();
+        follow15.add("ID"); follow15.add("+"); follow15.add("-"); follow15.add("(");
+        follow15.add("NUM");
+        followSets.put("addop" , follow15);
+
+        ArrayList<String> follow16= new ArrayList<>();
+        follow16.add("+"); follow16.add("-") ; follow16.add("<");
+        follow16.add("=="); follow16.add(";") ; follow16.add(")"); follow16.add("]");
+        follow16.add(",");
+        followSets.put("term" , follow16);
+        followSets.put("termB" , follow16);
+
+
+        ArrayList<String> follow17= new ArrayList<>();
+        follow17.add("+"); follow17.add("-") ; follow17.add("<");
+        follow17.add("=="); follow17.add(";") ; follow17.add(")"); follow17.add("]");
+        follow17.add(",");  follow17.add("*");
+
+        followSets.put("signed-factor" , follow17);
+        followSets.put("signed-factorA" , follow17);
+        followSets.put("factor" , follow17);
+        followSets.put("factorA" , follow17);
+        followSets.put("factorB" , follow17);
+
+        ArrayList<String> follow18= new ArrayList<>();
+        follow18.add(")");
+        followSets.put("args" , follow18);
+        followSets.put("arg-list" , follow18);
+        followSets.put("arg-listB" , follow18);
 
 
 
