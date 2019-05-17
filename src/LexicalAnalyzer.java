@@ -12,13 +12,17 @@ public class LexicalAnalyzer {
         this.io = io;
         this.index = 0;
         line_number = 1;
-        errors = new ArrayList<>();
+        errors = ErrorManager.errors;
         saved_line_number = 1;
     }
 
     public ArrayList<Error> getErrors()
     {
         return errors;
+    }
+
+    public int getSaved_line_number() {
+        return saved_line_number;
     }
 
     public Token getNextToken(){

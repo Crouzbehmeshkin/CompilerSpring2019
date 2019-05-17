@@ -20,4 +20,6 @@ public class Token {
     {
         return line_number;
     }
+
+    public String getString() { return token; }
 }
