@@ -121,16 +121,16 @@ public class IO {
 
                 String[] split ;
                 split = line.split("\\|");
-                System.out.println(split[0]);
+               // System.out.println(split[0]);
                 String[] s = split[0].split("\\(");
-                System.out.println(s[1]);
+              //  System.out.println(s[1]);
                 String []s1 = s[1].split(",");
-                System.out.println(s1[1]);
+                //System.out.println(s1[1]);
 
                 String[] s2 = s1[1].split(" ");
-                System.out.println(s2[1]);
+              //  System.out.println(s2[1]);
                 String[] s3 = s2[1].split("\\)");
-                System.out.println(s3[0]);
+              //  System.out.println(s3[0]);
 
                 if(s1[0] .equals("0"))
                     newNode.is_starting = false;
@@ -154,8 +154,6 @@ public class IO {
                         edgeSplit = split[i].split(", ");
                         String[] resultNode = edgeSplit[3].split("\\)");
                         Token newToken = new Token(edgeSplit[1] , edgeSplit[2] , 0);
-//                        String[] withoutSpace ;
-//                        withoutSpace = resultNode[0].split(" "); withoutSpace[1]
                         TerminalEdge newTerminalEdge = new TerminalEdge(Integer.valueOf(resultNode[0]) , newToken);
                         newNode.getEdges().add(newTerminalEdge);
 
@@ -166,11 +164,6 @@ public class IO {
                         String[] edgeSplit ;
                         edgeSplit = split[i].split(", ");
                         String[] returnNode = edgeSplit[3].split("\\)");
-//                        String[] edgeS ;
-//                        edgeS = edgeSplit[2].split(" ");  edgeS[1]
-//
-//                        String[] Rnode ;
-//                        Rnode = returnNode[0].split(" ");  Rnode[1]
 
                         NonTerminalEdge newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeSplit[2]) , Integer.valueOf(returnNode[0]) , edgeSplit[1] );
                         newNode.getEdges().add(newNonTerminalEdge);
@@ -191,6 +184,7 @@ public class IO {
                 stringBuffer.append("\n");
                 nodes.add(newNode);
             }
+            bufferedReader.close();
 
 
         }
