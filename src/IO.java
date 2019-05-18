@@ -118,13 +118,12 @@ public class IO {
 
                 Pattern tPattern = Pattern.compile(terminalPattern);
                 Pattern nonTPattern = Pattern.compile(nonTerminalPattern);
-
-
-                String[] split ;
+                String[] split;
                 split = line.split("\\|");
                 String[] s = split[0].split("\\(");
-                String []s1 = s[1].split(", ");
-                String []s2 = s1[1].split("\\)");
+               // System.out.print(s[0] + "----- ");
+                String[] s1 = s[1].split(", ");
+                String[] s2 = s1[1].split("\\)");
 
                 if(s1[0] .equals("0"))
                     newNode.is_starting = false;
@@ -138,7 +137,7 @@ public class IO {
 
 
 
-                for (int i = 1; i <split.length ; i++) {
+                for (int i = 1 ; i < split.length ; i++) {
 
                     Matcher tm = tPattern.matcher(split[i]);
                     Matcher nonTM = nonTPattern.matcher(split[i]);
