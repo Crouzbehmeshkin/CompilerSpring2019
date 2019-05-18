@@ -121,11 +121,16 @@ public class IO {
 
                 String[] split ;
                 split = line.split("\\|");
-
+                System.out.println(split[0]);
                 String[] s = split[0].split("\\(");
+                System.out.println(s[1]);
                 String []s1 = s[1].split(",");
+                System.out.println(s1[1]);
+
                 String[] s2 = s1[1].split(" ");
+                System.out.println(s2[1]);
                 String[] s3 = s2[1].split("\\)");
+                System.out.println(s3[0]);
 
                 if(s1[0] .equals("0"))
                     newNode.is_starting = false;
@@ -146,12 +151,12 @@ public class IO {
 
                     if(tm.find()){
                         String[] edgeSplit;
-                        edgeSplit = split[i].split(",");
+                        edgeSplit = split[i].split(", ");
                         String[] resultNode = edgeSplit[3].split("\\)");
                         Token newToken = new Token(edgeSplit[1] , edgeSplit[2] , 0);
-                        String[] withoutSpace ;
-                        withoutSpace = resultNode[0].split(" ");
-                        TerminalEdge newTerminalEdge = new TerminalEdge(Integer.valueOf(withoutSpace[1]) , newToken);
+//                        String[] withoutSpace ;
+//                        withoutSpace = resultNode[0].split(" "); withoutSpace[1]
+                        TerminalEdge newTerminalEdge = new TerminalEdge(Integer.valueOf(resultNode[0]) , newToken);
                         newNode.getEdges().add(newTerminalEdge);
 
 
@@ -159,15 +164,15 @@ public class IO {
 
                     else if(nonTM.find()){
                         String[] edgeSplit ;
-                        edgeSplit = split[i].split(",");
+                        edgeSplit = split[i].split(", ");
                         String[] returnNode = edgeSplit[3].split("\\)");
-                        String[] edgeS ;
-                        edgeS = edgeSplit[2].split(" ");
+//                        String[] edgeS ;
+//                        edgeS = edgeSplit[2].split(" ");  edgeS[1]
+//
+//                        String[] Rnode ;
+//                        Rnode = returnNode[0].split(" ");  Rnode[1]
 
-                        String[] Rnode ;
-                        Rnode = returnNode[0].split(" ");
-
-                        NonTerminalEdge newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeS[1]) , Integer.valueOf(Rnode[1]) , edgeSplit[1] );
+                        NonTerminalEdge newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeSplit[2]) , Integer.valueOf(returnNode[0]) , edgeSplit[1] );
                         newNode.getEdges().add(newNonTerminalEdge);
 
                     }
