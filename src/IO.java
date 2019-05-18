@@ -146,7 +146,7 @@ public class IO {
                         String[] edgeSplit;
                         edgeSplit = split[i].split(", ");
                         String[] resultNode = edgeSplit[3].split("\\)");
-                        Token newToken = new Token(edgeSplit[1] , edgeSplit[2] , 0);
+                        Token newToken = new Token(edgeSplit[1] , edgeSplit[2].substring(1, edgeSplit[2].length() - 1) , 0);
                         TerminalEdge newTerminalEdge = new TerminalEdge(Integer.valueOf(resultNode[0]) , newToken);
                         newNode.getEdges().add(newTerminalEdge);
 
@@ -208,8 +208,9 @@ public class IO {
         {
             StringBuilder sb = new StringBuilder();
             for (int i = 0 ; i < depth; i++)
-                sb.append('\t');
+                sb.append("\t.");
             sb.append(node_string);
+            sb.append('\n');
             parseTreeWriter.write(sb.toString());
         }
         catch (Exception e)

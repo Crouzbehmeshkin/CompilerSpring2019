@@ -218,13 +218,13 @@ public class Parser {
         followSets.put("type-specifier" , follow2);
 
         ArrayList<String> follow3= new ArrayList<>();
-        follow3.add("(");
+        follow3.add(")");
         followSets.put("params" , follow3);
         followSets.put("paramsB" , follow3);
         followSets.put("param-listB" , follow3);
 
         ArrayList<String> follow4= new ArrayList<>();
-        follow4.add("("); follow4.add(",");
+        follow4.add(")"); follow4.add(",");
         followSets.put("param" , follow4);
         followSets.put("paramB" , follow4);
 
@@ -345,22 +345,29 @@ public class Parser {
         currentNonTerminals.add("program");
 
         io.openParseTreeFile();
+        io.writeParseTreeNode(0, "program");
+
+        boolean read_next_peek = false;
+        Token peek = lexer.getNextToken();
 
         while (state != 3) {
-            System.out.println(state);
-            Token peek = lexer.getNextToken();
+            if (read_next_peek)
+            {
+                peek = lexer.getNextToken();
+                read_next_peek = false;
+            }
             int line_no = lexer.getSaved_line_number();
             Node currentNode = nodes.get(state);
             ArrayList<Edge> edges = currentNode.getEdges();
             String current_nt = currentNonTerminals.get(currentNonTerminals.size() - 1);
             int nextstate = 0;
 
+            System.out.println(state + " " + peek.getString());
             // reaching an ending node. so should return
             if (edges.size() == 0) {
                 state = stack.get(stack.size() - 1);
                 stack.remove(stack.size() - 1);
                 currentNonTerminals.remove(currentNonTerminals.size() - 1);
-                io.writeParseTreeNode(stack.size(), current_nt);
                 continue;
             }
             for (int i = 0; i < edges.size(); i++) {
@@ -378,6 +385,7 @@ public class Parser {
                             if (nt_follow_set.contains(peek.getType()))
                             {
                                 nextstate = t_edge.getResultingNode();
+                                io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
                                 break;
                             }
                         }
@@ -386,6 +394,7 @@ public class Parser {
                             if (nt_follow_set.contains(peek.getString()))
                             {
                                 nextstate = t_edge.getResultingNode();
+                                io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
                                 break;
                             }
                         }
@@ -396,34 +405,37 @@ public class Parser {
                         if (t_edge.getToken().getString().equals("*") || t_edge.getToken().getType().equals("EOF"))
                         {
                             nextstate = t_edge.getResultingNode();
-                            io.writeParseTreeNode(stack.size(), t_edge.getToken().getType());
+                            io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getType());
+                            read_next_peek = true;
                             break;
                         }
                         else if (t_edge.getToken().getString().equals(peek.getString()))
                         {
                             nextstate = t_edge.getResultingNode();
-                            io.writeParseTreeNode(stack.size(), t_edge.getToken().getString());
+                            io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
+                            read_next_peek = true;
                             break;
                         }
+                    }
+                    // error handling for terminals:
+                    if (edges.size() == 1 && nextstate == 0)
+                    {
+                        String terminal_name;
+                        if (t_edge.getToken().getType().equals("ID") || t_edge.getToken().getType().equals("NUM"))
+                            terminal_name = t_edge.getToken().getType();
+                        else
+                            terminal_name = t_edge.getToken().getString();
 
-                        // error handling for terminals:
-                        if (edges.size() == 1 && nextstate == 0)
+                        if (terminal_name.equals("End Of File"))
                         {
-                            String terminal_name;
-                            if (t_edge.getToken().getType().equals("ID") || t_edge.getToken().getType().equals("NUM"))
-                                terminal_name = t_edge.getToken().getType();
-                            else
-                                terminal_name = t_edge.getToken().getString();
-
-                            if (terminal_name.equals("End Of File"))
-                            {
-                                makeError(line_no, "Malformed Input");
-                                io.closeParseTreeFile();
-                                return;
-                            }
-                            makeError(line_no, "Missing " + terminal_name);
-                            nextstate = t_edge.getResultingNode();
+                            makeError(line_no, "Malformed Input");
+                            io.closeParseTreeFile();
+                            return;
                         }
+                        makeError(line_no, "Missing " + terminal_name);
+                        io.writeParseTreeNode(currentNonTerminals.size(), "*"+terminal_name);
+                        nextstate = t_edge.getResultingNode();
+                        read_next_peek = true;
                     }
                 }
                 else
@@ -434,15 +446,25 @@ public class Parser {
 
                     ArrayList edge_first_set = firstSets.get(nt_edge_string);
                     nextstate = getNextState(edge_first_set, nt_edge, stack, peek, currentNonTerminals);
+                    if (nextstate != 0)
+                    {
+                        io.writeParseTreeNode(currentNonTerminals.size() - 1, nt_edge_string);
+                        break;
+                    }
 
                     ArrayList edge_follow_set = followSets.get(nt_edge_string);
                     if (edge_first_set.contains("epsilon"))
                     {
                         nextstate = getNextState(edge_follow_set, nt_edge, stack, peek, currentNonTerminals);
+                        if (nextstate != 0)
+                        {
+                            io.writeParseTreeNode(currentNonTerminals.size() - 1, nt_edge_string);
+                            break;
+                        }
                     }
 
                     // handling nonTerminal errors
-                    if (edges.size() == 1 && nextstate == 0)
+                    if (edges.size() == 1)
                     {
                         String terminal_name;
                         if (peek.getType().equals("ID") || peek.getType().equals("NUM"))
@@ -460,16 +482,17 @@ public class Parser {
                         {
                             nextstate = nt_edge.getReturningNode();
                             makeError(line_no, "Missing " + nt_edge_string);
+                            io.writeParseTreeNode(currentNonTerminals.size(), "*"+nt_edge_string);
                         }
                         else
                         {
                             makeError(line_no, "Unexpected " + terminal_name);
                             nextstate = state;
+                            read_next_peek = true;
                         }
                     }
                 }
             }
-
             state = nextstate;
         }
         io.closeParseTreeFile();
