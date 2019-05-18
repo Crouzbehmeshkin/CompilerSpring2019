@@ -119,25 +119,19 @@ public class IO {
                 Pattern tPattern = Pattern.compile(terminalPattern);
                 Pattern nonTPattern = Pattern.compile(nonTerminalPattern);
 
+
                 String[] split ;
                 split = line.split("\\|");
-               // System.out.println(split[0]);
                 String[] s = split[0].split("\\(");
-              //  System.out.println(s[1]);
-                String []s1 = s[1].split(",");
-                //System.out.println(s1[1]);
-
-                String[] s2 = s1[1].split(" ");
-              //  System.out.println(s2[1]);
-                String[] s3 = s2[1].split("\\)");
-              //  System.out.println(s3[0]);
+                String []s1 = s[1].split(", ");
+                String []s2 = s1[1].split("\\)");
 
                 if(s1[0] .equals("0"))
                     newNode.is_starting = false;
                 else
                     newNode.is_starting = true;
 
-                if(s3[0] .equals("0"))
+                if(s2[0] .equals("0"))
                     newNode.is_returning = false;
                 else
                     newNode.is_returning = true;
@@ -171,7 +165,7 @@ public class IO {
                     }
 
                     else{
-                        System.out.println("no match found");
+                        System.out.println("No match found !!!");
                     }
 
 
