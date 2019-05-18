@@ -16,7 +16,6 @@ public class Parser {
         errors = ErrorManager.errors;
         init_nodes();
         addToHashMaps();
-        parseCode();
     }
 
     private void init_nodes()
@@ -348,6 +347,7 @@ public class Parser {
         io.openParseTreeFile();
 
         while (state != 3) {
+            System.out.println(state);
             Token peek = lexer.getNextToken();
             int line_no = lexer.getSaved_line_number();
             Node currentNode = nodes.get(state);
