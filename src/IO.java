@@ -113,8 +113,8 @@ public class IO {
 
                 stringBuffer.append(line);
 
-                String terminalPattern = "(.*)(T,(.*))";
-                String nonTerminalPattern = "(.*)(NT,(.*))";
+                String terminalPattern = "\\(T" ;
+                String nonTerminalPattern = "\\(NT" ;
 
                 Pattern tPattern = Pattern.compile(terminalPattern);
                 Pattern nonTPattern = Pattern.compile(nonTerminalPattern);

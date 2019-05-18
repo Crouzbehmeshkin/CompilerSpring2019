@@ -469,6 +469,7 @@ public class Parser {
                     }
                 }
             }
+
             state = nextstate;
         }
         io.closeParseTreeFile();
