@@ -1,5 +1,4 @@
-// for NonTerminals: (NT, edge-string, resultingNode, returningNode). for Terminals: (T, TokenType, "TokenString", resultingNode)
-Node_No: (starting_node, returning_node) (edge1) (edge2)
+0. (0, 0)
 1. (1, 0)|(NT, declaration-list, 4, 2)
 2. (0, 0)|(T, EOF, "End Of File", 3)
 3. (0, 1)

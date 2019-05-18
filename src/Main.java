@@ -13,6 +13,8 @@ public class Main {
         Token token = null;
         io.readInput();
 
+        System.out.println(io.input.size());
+
         parser.parseCode();
 
         //io.printTokens(tokens);
