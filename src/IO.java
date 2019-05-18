@@ -124,14 +124,15 @@ public class IO {
 
                 String[] s = split[0].split("\\(");
                 String []s1 = s[1].split(",");
-                String[] s2 = s1[1].split("\\)");
+                String[] s2 = s1[1].split(" ");
+                String[] s3 = s2[1].split("\\)");
 
                 if(s1[0] .equals("0"))
                     newNode.is_starting = false;
                 else
                     newNode.is_starting = true;
 
-                if(s2[0] .equals("0"))
+                if(s3[0] .equals("0"))
                     newNode.is_returning = false;
                 else
                     newNode.is_returning = true;
@@ -148,7 +149,9 @@ public class IO {
                         edgeSplit = split[i].split(",");
                         String[] resultNode = edgeSplit[3].split("\\)");
                         Token newToken = new Token(edgeSplit[1] , edgeSplit[2] , 0);
-                        TerminalEdge newTerminalEdge = new TerminalEdge(Integer.parseInt(resultNode[0]) , newToken);
+                        String[] withoutSpace ;
+                        withoutSpace = resultNode[0].split(" ");
+                        TerminalEdge newTerminalEdge = new TerminalEdge(Integer.valueOf(withoutSpace[1]) , newToken);
                         newNode.getEdges().add(newTerminalEdge);
 
 
@@ -158,7 +161,13 @@ public class IO {
                         String[] edgeSplit ;
                         edgeSplit = split[i].split(",");
                         String[] returnNode = edgeSplit[3].split("\\)");
-                        NonTerminalEdge newNonTerminalEdge = new NonTerminalEdge(Integer.parseInt(edgeSplit[2]) ,Integer.parseInt(returnNode[0]) , edgeSplit[1] );
+                        String[] edgeS ;
+                        edgeS = edgeSplit[2].split(" ");
+
+                        String[] Rnode ;
+                        Rnode = returnNode[0].split(" ");
+
+                        NonTerminalEdge newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeS[1]) , Integer.valueOf(Rnode[1]) , edgeSplit[1] );
                         newNode.getEdges().add(newNonTerminalEdge);
 
                     }
