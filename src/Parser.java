@@ -108,7 +108,7 @@ public class Parser {
 
         ArrayList<String> first17 = new ArrayList<>();
         first17.add("case"); first17.add("epsilon");
-            firstSets.put("case-stmt" , first17);
+            firstSets.put("case-stmts" , first17);
             firstSets.put("case-stmtB" , first17);
 
         ArrayList<String> first18 = new ArrayList<>();
@@ -143,11 +143,11 @@ public class Parser {
         first24.add("<"); first24.add("==");
         firstSets.put("relop" , first24);
 
-        firstSets.put("addictive-expression" , first20);
+        firstSets.put("additive-expression" , first20);
 
         ArrayList<String> first25 = new ArrayList<>();
          first25.add("+") ; first25.add("-") ; first25.add("epsilon");
-        firstSets.put("addictive-expressionB" , first25);
+        firstSets.put("additive-expressionB" , first25);
 
         ArrayList<String> first26 = new ArrayList<>();
         first26.add("+");   first26.add("-");
@@ -261,7 +261,7 @@ public class Parser {
         ArrayList<String> follow8= new ArrayList<>();
         follow8.add("default"); follow8.add("}");
         followSets.put("case-stmts" , follow8);
-        followSets.put("case-stmtsB" , follow8);
+        followSets.put("case-stmtB" , follow8);
 
         ArrayList<String> follow9= new ArrayList<>();
         follow9.add("default"); follow9.add("}"); follow9.add("case");
@@ -279,7 +279,7 @@ public class Parser {
         followSets.put("expressionB" , follow11);
         followSets.put("expressionC" , follow11);
         followSets.put("simple-expressionB" , follow11);
-        followSets.put("addictive-expression" , follow11);
+        followSets.put("additive-expression" , follow11);
 
 
 
@@ -297,7 +297,7 @@ public class Parser {
         ArrayList<String> follow14= new ArrayList<>();
         follow14.add("<"); follow14.add("==") ; follow14.add(";") ; follow14.add(")");
         follow14.add("]"); follow14.add(",");
-        followSets.put("addictive-expressionB" , follow14);
+        followSets.put("additive-expressionB" , follow14);
 
         ArrayList<String> follow15= new ArrayList<>();
         follow15.add("ID"); follow15.add("+"); follow15.add("-"); follow15.add("(");
@@ -402,7 +402,7 @@ public class Parser {
                     if (t_edge.getToken().getType().equals(peek.getType()))
                     {
                         // terminal edge. not epsilon
-                        if (t_edge.getToken().getString().equals("*") || t_edge.getToken().getType().equals("EOF"))
+                        if (t_edge.getToken().getType().equals("ID") || t_edge.getToken().getType().equals("NUM") || t_edge.getToken().getType().equals("EOF"))
                         {
                             nextstate = t_edge.getResultingNode();
                             io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getType());
@@ -435,7 +435,6 @@ public class Parser {
                         makeError(line_no, "Missing " + terminal_name);
                         io.writeParseTreeNode(currentNonTerminals.size(), "*"+terminal_name);
                         nextstate = t_edge.getResultingNode();
-                        read_next_peek = true;
                     }
                 }
                 else
@@ -502,7 +501,7 @@ public class Parser {
     private int getNextState(ArrayList set, NonTerminalEdge nt_edge, ArrayList<Integer> stack, Token peek, ArrayList<String> cNT) {
         int nextstate = 0;
         for (int j = 0; j < set.size(); j++) {
-            if (set.get(j).equals("NUM") || set.get(j).equals("ID")) {
+            if (set.get(j).equals("NUM") || set.get(j).equals("ID") || set.get(j).equals("EOF")) {
                 if (peek.getType().equals(set.get(j))) {
                     nextstate = nt_edge.getResultingNode();
                     stack.add(nt_edge.getReturningNode());
