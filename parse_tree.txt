@@ -19,14 +19,14 @@ program
 	.	.	.	.	.	.	.int
 	.	.	.	.	.	.	.ID
 	.	.	.	.	.	.	.paramB
-	.	.	.	.	.	.	.	.psilo
+	.	.	.	.	.	.	.	.epsilon
 	.	.	.	.	.	.	.param-listB
 	.	.	.	.	.	.	.	.,
 	.	.	.	.	.	.	.	.param
 	.	.	.	.	.	.	.	.	.int
 	.	.	.	.	.	.	.	.	.ID
 	.	.	.	.	.	.	.	.	.paramB
-	.	.	.	.	.	.	.	.	.	.psilo
+	.	.	.	.	.	.	.	.	.	.epsilon
 	.	.	.	.	.	.	.	.param-listB
 	.	.	.	.	.	.	.	.	.epsilon
 	.	.	.	.	.	.)
