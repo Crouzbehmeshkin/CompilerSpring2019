@@ -12,7 +12,7 @@ public class IO {
 
         try{
 
-            InputStream in = new FileInputStream("input.txt");
+            InputStream in = new FileInputStream("Parser/Test Error - Parser.txt");
             Reader r = new InputStreamReader(in, "US-ASCII");
             int reader;
             while ((reader = r.read()) != -1) {
@@ -31,7 +31,7 @@ public class IO {
     {
 
         try (Writer writers = new BufferedWriter(new OutputStreamWriter(
-                new FileOutputStream("tokens.txt"), "utf-8"))) {
+                new FileOutputStream("tokens2.txt"), "utf-8"))) {
             if (tokens.size() > 0)
             {
                 int lineNumber = tokens.get(0).getLine_number();
