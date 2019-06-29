@@ -1,8 +1,8 @@
 public class SymbolTableEntry {
-    private String type, dimension;
-    private int line, address, pointer;
+    private String type;
+    private int line, address, pointer, dimension;
 
-    public SymbolTableEntry(int address, String type, String dimension, int line, int pointer) {
+    public SymbolTableEntry(int address, String type, int dimension, int line, int pointer) {
         this.address = address;
         this.type = type;
         this.dimension = dimension;
@@ -18,7 +18,7 @@ public class SymbolTableEntry {
         return type;
     }
 
-    public String getDimension() {
+    public int getDimension() {
         return dimension;
     }
 

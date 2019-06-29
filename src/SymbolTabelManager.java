@@ -11,18 +11,18 @@ public class SymbolTabelManager {
         symbolTables.add(globalSymbolTable);
     }
 
-    public static void addScope()
+    public void addScope()
     {
         HashMap<SymbolTableKey, SymbolTableEntry> nSymbolTable = new HashMap<>();
         symbolTables.add(nSymbolTable);
     }
 
-    public static void removeScope()
+    public void removeScope()
     {
         symbolTables.remove(symbolTables.size() - 1);
     }
 
-    public static void insert(String g_type, String var_name, String type, String dimension, int line) {
+    public void insert(String g_type, String var_name, String type, int len, int dimension, int line) {
         HashMap<SymbolTableKey, SymbolTableEntry> top = symbolTables.get(symbolTables.size() - 1);
         SymbolTableKey key = new SymbolTableKey(g_type, var_name);
         if (top.containsKey(key)) {
@@ -32,9 +32,8 @@ public class SymbolTabelManager {
         SymbolTableEntry entry;
         if (g_type.equals("var"))
         {
-            // todo: if dimension more than 1 allocate space on heap and get pointer
             entry = new SymbolTableEntry(address, type, dimension, line, 0);
-            address += 4;
+            address += len;
         }
         else
         {
@@ -42,7 +41,7 @@ public class SymbolTabelManager {
         }
     }
 
-    public static SymbolTableEntry lookup(String g_type, String var_name)
+    public SymbolTableEntry lookup(String g_type, String var_name)
     {
         SymbolTableKey key = new SymbolTableKey(g_type, var_name);
         int index = symbolTables.size() - 1;
