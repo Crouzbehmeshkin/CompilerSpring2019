@@ -2,13 +2,14 @@ import java.util.ArrayList;
 import java.util.HashMap;
 
 public class SymbolTabelManager {
-    private static ArrayList<HashMap<SymbolTableKey, SymbolTableEntry>> symbolTables;
-    private static int address = 300;
+    private ArrayList<HashMap<SymbolTableKey, SymbolTableEntry>> symbolTables;
+    private int address;
 
     public SymbolTabelManager()
     {
         HashMap<SymbolTableKey, SymbolTableEntry> globalSymbolTable = new HashMap<>();
         symbolTables.add(globalSymbolTable);
+        address = 1004;
     }
 
     public void addScope()
@@ -32,12 +33,12 @@ public class SymbolTabelManager {
         SymbolTableEntry entry;
         if (g_type.equals("var"))
         {
-            entry = new SymbolTableEntry(address, type, dimension, line, 0);
+            entry = new SymbolTableEntry(address, type, dimension, line, 0, new ArrayList<>());
             address += len;
         }
         else
         {
-            entry = new SymbolTableEntry(-1, type, dimension, line, -1);
+            entry = new SymbolTableEntry(-1, type, dimension, line, -1, new ArrayList<>());
         }
     }
 

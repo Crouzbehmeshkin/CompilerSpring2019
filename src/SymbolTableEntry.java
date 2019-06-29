@@ -1,13 +1,17 @@
+import java.util.ArrayList;
+
 public class SymbolTableEntry {
     private String type;
     private int line, address, pointer, dimension;
+    private ArrayList<String> params;
 
-    public SymbolTableEntry(int address, String type, int dimension, int line, int pointer) {
+    public SymbolTableEntry(int address, String type, int dimension, int line, int pointer, ArrayList<String> params) {
         this.address = address;
         this.type = type;
         this.dimension = dimension;
         this.line = line;
         this.pointer = pointer;
+        this.params = params;
     }
 
     public int getAddress() {
@@ -29,5 +33,9 @@ public class SymbolTableEntry {
     public int getPointer()
     {
         return pointer;
+    }
+
+    public ArrayList<String> getParams() {
+        return params;
     }
 }
