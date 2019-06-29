@@ -42,4 +42,9 @@ public class SymbolTableEntry {
     public void setParams(ArrayList<String> params) {
         this.params = params;
     }
+
+    public void setAddress(int address)
+    {
+        this.address = address;
+    }
 }

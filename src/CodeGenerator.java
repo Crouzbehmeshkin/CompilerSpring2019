@@ -5,7 +5,7 @@ public class CodeGenerator {
     private ThreeAddressCode[] PB = new ThreeAddressCode[1000];
     private int codePointer = 0, stackPointer = 1000, tempMem = 4000;
     private int outputFunction = 0;
-    private ArrayList<String> functionParams;
+    private ArrayList<String> functionParams, functionParamNames;
     private String param, paramType;
     private int paramDimension, paramCnt;
     //1000: stack pointer
@@ -75,6 +75,7 @@ public class CodeGenerator {
                 break;
             case "start_function":
                 functionParams = new ArrayList<>();
+                functionParamNames = new ArrayList<>();
                 symbolTabelManager.insert("function", idName, declarationType, -1, 0, line);
                 symbolTabelManager.addScope();
                 param = "";
@@ -105,8 +106,10 @@ public class CodeGenerator {
                     gType = "function";
                 else
                     gType = "var";
-                symbolTabelManager.insert(gType, param, paramType, 1, paramDimension, line, paramCnt);
+                // setting relative address to the top of the stack later
+                symbolTabelManager.insert(gType, param, paramType, 1, paramDimension, line, 0);
                 functionParams.add(paramType+paramDimension);
+                functionParamNames.add(param);
                 param = "";
                 paramType = "";
                 paramDimension = 0;
@@ -115,10 +118,21 @@ public class CodeGenerator {
             case "add_function_params":
                 entry = symbolTabelManager.lookup("function", idName);
                 entry.setParams(functionParams);
+                int paramNo = functionParams.size();
+                for(int i = 0; i < paramNo; i++)
+                {
+                    String paramName = functionParamNames.get(i);
+                    String paramType = functionParams.get(i).substring(0, functionParams.get(i).length() - 1);
+                    if (paramType.equals("int"))
+                        gType = "var";
+                    else
+                        gType = "function";
+                    entry = symbolTabelManager.lookup(gType, paramName);
+                    entry.setAddress(paramNo - entry.getAddress());
+                }
                 functionParams = new ArrayList<>();
                 paramCnt = 0;
                 break;
-
 
         }
     }
