@@ -1,8 +1,13 @@
+import java.util.ArrayList;
+
 public class CodeGenerator {
     private SymbolTabelManager symbolTabelManager;
     private ThreeAddressCode[] PB = new ThreeAddressCode[1000];
-    private int codePointer = 0, stackPointer = 5000, tempMem = 4000;
+    private int codePointer = 0, stackPointer = 1000, tempMem = 4000;
     private int outputFunction = 0;
+    private ArrayList<String> functionParams;
+    private String param, paramType;
+    private int paramDimension, paramCnt;
     //1000: stack pointer
     //1001: frame pointer
     //1002: temporary
@@ -26,7 +31,7 @@ public class CodeGenerator {
         codePointer++;
 
         // initializing stack pointer
-        PB[codePointer] = new ThreeAddressCode("ASSIGN", "#4000", "1000", "");
+        PB[codePointer] = new ThreeAddressCode("ASSIGN", "#5000", "1000", "");
         codePointer++;
     }
 
@@ -68,6 +73,52 @@ public class CodeGenerator {
                 dimension = line = -1;
                 var_len = 0;
                 break;
+            case "start_function":
+                functionParams = new ArrayList<>();
+                symbolTabelManager.insert("function", idName, declarationType, -1, 0, line);
+                symbolTabelManager.addScope();
+                param = "";
+                paramType = "";
+                paramDimension = 0;
+                paramCnt = 0;
+                break;
+            case "zero_param":
+                SymbolTableEntry entry = symbolTabelManager.lookup("function", idName);
+                entry.setParams(functionParams);
+                break;
+            case "add_param_type":
+                paramType = peek.getString();
+                break;
+            case "add_param_name":
+                param = peek.getString();
+                break;
+            case "set_param_dimension":
+                paramDimension = 1;
+                break;
+            case "add_param_exc":
+                paramType = "void";
+                param = peek.getString();
+                break;
+            case "add_param":
+                String gType;
+                if (paramType.equals("void"))
+                    gType = "function";
+                else
+                    gType = "var";
+                symbolTabelManager.insert(gType, param, paramType, 1, paramDimension, line, paramCnt);
+                functionParams.add(paramType+paramDimension);
+                param = "";
+                paramType = "";
+                paramDimension = 0;
+                paramCnt++;
+                break;
+            case "add_function_params":
+                entry = symbolTabelManager.lookup("function", idName);
+                entry.setParams(functionParams);
+                functionParams = new ArrayList<>();
+                paramCnt = 0;
+                break;
+
 
         }
     }

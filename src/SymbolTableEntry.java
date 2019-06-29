@@ -38,4 +38,8 @@ public class SymbolTableEntry {
     public ArrayList<String> getParams() {
         return params;
     }
+
+    public void setParams(ArrayList<String> params) {
+        this.params = params;
+    }
 }
