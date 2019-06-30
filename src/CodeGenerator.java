@@ -1,4 +1,5 @@
 import java.util.ArrayList;
+import java.util.Stack;
 
 public class CodeGenerator {
     private SymbolTabelManager symbolTabelManager;
@@ -8,6 +9,8 @@ public class CodeGenerator {
     private ArrayList<String> functionParams, functionParamNames;
     private String param, paramType;
     private int paramDimension, paramCnt;
+    private ArrayList<Integer> SS;
+
     //1000: stack pointer
     //1001: frame pointer
     //1002: temporary
@@ -23,6 +26,7 @@ public class CodeGenerator {
     public CodeGenerator(SymbolTabelManager symbolTabelManager)
     {
         this.symbolTabelManager = symbolTabelManager;
+        SS = new ArrayList<>();
 
         // code for output function
         PB[codePointer] = new ThreeAddressCode("PRINT", "@"+ stackPointer, "", "");
@@ -133,6 +137,21 @@ public class CodeGenerator {
                 functionParams = new ArrayList<>();
                 paramCnt = 0;
                 break;
+            case "end_compound_statement":
+                ArrayList<Integer> breaks = symbolTabelManager.lookup_scope_breaks();
+                for (int i = 0; i < breaks.size(); i++)
+                {
+                    PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+                }
+                symbolTabelManager.removeScope();
+                break;
+            case "fix_continue":
+                int tmp_line = symbolTabelManager.get_last_loop_start();
+                PB[codePointer] = new ThreeAddressCode("JP",  String.valueOf(tmp_line), "", "");
+                codePointer++;
+                break;
+
+
 
         }
     }

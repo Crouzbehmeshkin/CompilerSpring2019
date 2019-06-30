@@ -3,12 +3,19 @@ import java.util.HashMap;
 
 public class SymbolTabelManager {
     private ArrayList<HashMap<SymbolTableKey, SymbolTableEntry>> symbolTables;
+    private ArrayList<ArrayList<Integer> > breaks;
+    private ArrayList<Integer> loopStarts;
     private int address;
 
     public SymbolTabelManager()
     {
         HashMap<SymbolTableKey, SymbolTableEntry> globalSymbolTable = new HashMap<>();
         symbolTables.add(globalSymbolTable);
+
+        breaks = new ArrayList<>();
+        breaks.add(new ArrayList<>());
+
+        loopStarts = new ArrayList<>();
         address = 1004;
     }
 
@@ -16,11 +23,14 @@ public class SymbolTabelManager {
     {
         HashMap<SymbolTableKey, SymbolTableEntry> nSymbolTable = new HashMap<>();
         symbolTables.add(nSymbolTable);
+        breaks.add(new ArrayList<>());
     }
 
     public void removeScope()
     {
         symbolTables.remove(symbolTables.size() - 1);
+        breaks.remove(breaks.size() - 1);
+        loopStarts.remove(loopStarts.size() - 1);
     }
 
     public void insert(String g_type, String var_name, String type, int len, int dimension, int line) {
@@ -72,6 +82,26 @@ public class SymbolTabelManager {
             index --;
         }
         return null;
+    }
+
+    public void insert_break(int code_line)
+    {
+        breaks.get(breaks.size() - 1).add(code_line);
+    }
+
+    public ArrayList<Integer> lookup_scope_breaks()
+    {
+        return breaks.get(breaks.size() - 1);
+    }
+
+    public void insert_loop_start(int code_line)
+    {
+        loopStarts.add(code_line);
+    }
+
+    public int get_last_loop_start()
+    {
+        return loopStarts.get(loopStarts.size() - 1);
     }
 
 }
