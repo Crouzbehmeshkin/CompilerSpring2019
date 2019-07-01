@@ -6,10 +6,20 @@ public class CodeGenerator {
     private ThreeAddressCode[] PB = new ThreeAddressCode[1000];
     private int codePointer = 0, stackPointer = 1000, tempMem = 4000;
     private int outputFunction = 0;
+
+    private ArrayList<String> idName;
+
+    private SymbolTableEntry entry;
     private ArrayList<String> functionParams, functionParamNames;
     private String param, paramType;
     private int paramDimension, paramCnt;
     private ArrayList<Integer> SS;
+    private boolean returnedValue;
+    private String signedFactorName;
+    private int idAddress;
+    private String addressString, addressString2;
+    private int tmp_num;
+    private int addop, relop;
 
     //1000: stack pointer
     //1001: frame pointer
@@ -27,6 +37,12 @@ public class CodeGenerator {
     {
         this.symbolTabelManager = symbolTabelManager;
         SS = new ArrayList<>();
+        returnedValue = false;
+        signedFactorName = "";
+        idAddress = -1;
+        idName = new ArrayList<>();
+        addop = 0;
+        relop = 0;
 
         // code for output function
         PB[codePointer] = new ThreeAddressCode("PRINT", "@"+ stackPointer, "", "");
@@ -39,7 +55,7 @@ public class CodeGenerator {
         codePointer++;
     }
 
-    private String declarationType, idName;
+    private String declarationType;
     private int dimension, line, var_len;
 
     private int getTemporary()
@@ -47,20 +63,18 @@ public class CodeGenerator {
         return tempMem++;
     }
 
-    public void runSemanticRoutine(String routineName, Token peek, int line_no)
+    public void runSemanticRoutine(String routineName, Token peek)
     {
         switch(routineName)
         {
             case "typeSpecifier1":
                 declarationType = "int";
-                line = line_no;
                 break;
             case "typeSpecifier2":
                 declarationType = "void";
-                line = line_no;
                 break;
             case "save_id_name":
-                idName = peek.getString();
+                idName.add(peek.getString());
                 break;
             case "save_dimension":
                 dimension = 1;
@@ -71,16 +85,16 @@ public class CodeGenerator {
                 var_len = 4;
                 break;
             case "finalize_declaration1":
-                symbolTabelManager.insert("var", idName, declarationType, var_len, dimension, line);
+                symbolTabelManager.insert("var", idName.get(idName.size() - 1), declarationType, var_len, dimension, 0);
                 declarationType = "";
-                idName = "";
+                idName.remove(idName.size() - 1);
                 dimension = line = -1;
                 var_len = 0;
                 break;
             case "start_function":
                 functionParams = new ArrayList<>();
                 functionParamNames = new ArrayList<>();
-                symbolTabelManager.insert("function", idName, declarationType, -1, 0, line);
+                symbolTabelManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer);
                 symbolTabelManager.addScope();
                 param = "";
                 paramType = "";
@@ -88,7 +102,7 @@ public class CodeGenerator {
                 paramCnt = 0;
                 break;
             case "zero_param":
-                SymbolTableEntry entry = symbolTabelManager.lookup("function", idName);
+                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
                 entry.setParams(functionParams);
                 break;
             case "add_param_type":
@@ -120,7 +134,7 @@ public class CodeGenerator {
                 paramCnt++;
                 break;
             case "add_function_params":
-                entry = symbolTabelManager.lookup("function", idName);
+                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
                 entry.setParams(functionParams);
                 int paramNo = functionParams.size();
                 for(int i = 0; i < paramNo; i++)
@@ -132,7 +146,7 @@ public class CodeGenerator {
                     else
                         gType = "function";
                     entry = symbolTabelManager.lookup(gType, paramName);
-                    entry.setAddress(paramNo - entry.getAddress());
+                    entry.setAddress( -paramNo + entry.getAddress());
                 }
                 functionParams = new ArrayList<>();
                 paramCnt = 0;
@@ -150,9 +164,198 @@ public class CodeGenerator {
                 PB[codePointer] = new ThreeAddressCode("JP",  String.valueOf(tmp_line), "", "");
                 codePointer++;
                 break;
+            case "add_break":
+                symbolTabelManager.insert_break(codePointer);
+                codePointer++;
+                break;
+            case "label_if1":
+                SS.add(codePointer);
+                codePointer++;
+                symbolTabelManager.addScope();
+                break;
+            case "label_if2":
+                SS.add(codePointer);
+                codePointer++;
+                symbolTabelManager.removeScope();
+                break;
+            case "fill_if1":
+                int label = SS.get(SS.size() - 2);
+                int expressionResult = SS.get(SS.size() - 3);
+                PB[label] = new ThreeAddressCode("JPF", String.valueOf(expressionResult),String.valueOf(codePointer), "");
+                symbolTabelManager.addScope();
+                break;
+            case "fill_if2":
+                label = SS.get(SS.size()-1);
+                PB[label] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+                symbolTabelManager.removeScope();
+                for (int i = 0; i < 3; i++)
+                    SS.remove(SS.size() - 1);
+                break;
+            case "label_while":
+                SS.add(codePointer);
+                symbolTabelManager.insert_loop_start(codePointer);
+                break;
+            case "save_while":
+                SS.add(codePointer);
+                codePointer++;
+                symbolTabelManager.addScope();
+                break;
+            case "fill_while":
+                label = SS.get(SS.size() - 1);
+                expressionResult = SS.get(SS.size() - 2);
+                PB[label] = new ThreeAddressCode("JPF", String.valueOf(expressionResult), String.valueOf(codePointer+1), "");
+                label = SS.get(SS.size() - 3);
+                PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(label), "", "");
+                codePointer++;
+                // pop the stack
+                for (int i = 0 ; i < 3; i++)
+                    SS.remove(SS.size() - 1);
 
+                //filling breaks
+                breaks = symbolTabelManager.lookup_scope_breaks();
+                for (int i = 0 ; i < breaks.size(); i++)
+                    PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+
+                symbolTabelManager.removeScope();
+                break;
+            case "set_return_bool1":
+                returnedValue = false;
+                break;
+            case "set_return_bool2":
+                returnedValue = true;
+                break;
+            case "add_switch_scope":
+                symbolTabelManager.addScope();
+                break;
+            case "remove_switch_scope":
+                breaks = symbolTabelManager.lookup_scope_breaks();
+                for (int i = 0 ; i < breaks.size(); i++)
+                    PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+                symbolTabelManager.removeScope();
+                break;
+            case "save_case":
+                SS.add(codePointer);
+                SS.add(Integer.valueOf(peek.getString()));
+                codePointer+=2;
+                break;
+            case "fill_case":
+                label = SS.get(SS.size() - 2);
+                int num = SS.get(SS.size() - 1);
+                expressionResult = SS.get(SS.size() - 3);
+                int t = getTemporary();
+                PB[label] = new ThreeAddressCode("EQ", String.valueOf(expressionResult), "#" + num, String.valueOf(t) );
+                PB[label + 1] = new ThreeAddressCode("JPF", String.valueOf(t), String.valueOf(codePointer), "");
+                for (int i = 0 ; i < 2; i++)
+                    SS.remove(SS.size() - 1);
+                break;
+            case "save_signed_factor_name":
+                signedFactorName = peek.getString();
+                break;
+            case "pid":
+                idName.add(peek.getString());
+                break;
+            case "pid2":
+                entry = symbolTabelManager.lookup("var", idName.get(idName.size() - 1));
+                idName.remove(idName.size() - 1);
+                SS.add(entry.getAddress());
+                break;
+            case "find_array_address":
+                tempMem = getTemporary();
+                addressString = getAddressString(SS.get(SS.size() - 1));
+                PB[codePointer] = new ThreeAddressCode("MULT", addressString, "#4", String.valueOf(tempMem));
+                codePointer++;
+                SS.remove(SS.size() - 1);
+                SS.add(tempMem);
+
+                tempMem = getTemporary();
+                addressString = getAddressString(SS.get(SS.size() - 2));
+                addressString2 = getAddressString(SS.get(SS.size() - 1));
+                PB[codePointer] = new ThreeAddressCode("ADD", addressString, addressString2, String.valueOf(tempMem));
+                codePointer++;
+
+                SS.remove(SS.size() - 1);
+                SS.remove(SS.size() - 1);
+                SS.add(-tempMem);
+                break;
+            case "allocate_num":
+                tempMem = getTemporary();
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", "#"+peek.getString(), String.valueOf(tempMem), "");
+                codePointer++;
+                break;
+            case "minus_factor":
+                tempMem = getTemporary();
+                addressString = getAddressString(SS.get(SS.size() - 1));
+                PB[codePointer] = new ThreeAddressCode("SUB", "#0", addressString, String.valueOf(tempMem));
+                codePointer++;
+                SS.remove(SS.size() - 1);
+                SS.add(tempMem);
+                break;
+            case "mult_termB":
+                tempMem = getTemporary();
+                addressString = getAddressString(SS.get(SS.size() - 2));
+                addressString2 = getAddressString(SS.get(SS.size() - 1));
+                PB[codePointer] = new ThreeAddressCode("MULT", addressString, addressString2, String.valueOf(tempMem));
+                codePointer++;
+                SS.remove(SS.size() - 1);
+                SS.remove(SS.size() - 1);
+                SS.add(tempMem);
+                break;
+            case "addop1":
+                addop = 1;
+                break;
+            case "addop2":
+                addop = 2;
+                break;
+            case "add_exp":
+                addressString = getAddressString(SS.get(SS.size() - 2));
+                addressString2 = getAddressString(SS.get(SS.size() - 1));
+                tempMem = getTemporary();
+                if (addop == 1)
+                    PB[codePointer] = new ThreeAddressCode("ADD", addressString, addressString2, String.valueOf(tempMem));
+                else
+                    PB[codePointer] = new ThreeAddressCode("SUB", addressString, addressString2, String.valueOf(tempMem));
+                codePointer++;
+                SS.remove(SS.size() - 1);
+                SS.remove(SS.size() - 1);
+                SS.add(tempMem);
+                addop = 0;
+                break;
+            case "relop1":
+                relop = 1;
+                break;
+            case "relop2":
+                relop = 2;
+                break;
+            case "compare_exp":
+                addressString = getAddressString(SS.get(SS.size() - 2));
+                addressString2 = getAddressString(SS.get(SS.size() - 1));
+                tempMem = getTemporary();
+                if (relop == 1)
+                    PB[codePointer] = new ThreeAddressCode("LT", addressString, addressString2, String.valueOf(tempMem));
+                else
+                    PB[codePointer] = new ThreeAddressCode("EQ", addressString, addressString2, String.valueOf(tempMem));
+                codePointer++;
+                SS.remove(SS.size() - 1);
+                SS.remove(SS.size() - 1);
+                SS.add(tempMem);
+                relop = 0;
+                break;
+            case "assignment":
+                addressString = getAddressString(SS.get(SS.size() - 2));
+                addressString2 = getAddressString(SS.get(SS.size() - 1));
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, addressString2, "");
+                codePointer++;
+                break;
 
 
         }
+    }
+
+    private String getAddressString(int address)
+    {
+        String ret = String.valueOf(address);
+        if (address <= -4000)
+            return "@" + ret.substring(1);
+        return ret;
     }
 }
