@@ -72,10 +72,10 @@ public class CodeGenerator {
             return;
         switch(routineName)
         {
-            case "typeSpecifier1":
+            case "type_specifier1":
                 declarationType = "int";
                 break;
-            case "typeSpecifier2":
+            case "type_specifier2":
                 declarationType = "void";
                 break;
             case "save_id_name":
