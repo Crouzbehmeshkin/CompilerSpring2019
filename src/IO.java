@@ -278,7 +278,10 @@ public class IO {
         for (int i = 0 ; i < 1000; i++)
         {
             try {
-                codeWriter.write(PB[i].getCode() + "\n");
+                if (PB[i] != null) {
+                    codeWriter.write(PB[i].getCode() + "\n");
+                    System.out.println(i);
+                }
             } catch (IOException e) {
                 e.printStackTrace();
             }

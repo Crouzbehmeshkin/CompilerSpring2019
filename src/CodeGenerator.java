@@ -1,8 +1,7 @@
 import java.util.ArrayList;
-import java.util.Stack;
 
 public class CodeGenerator {
-    private SymbolTabelManager symbolTabelManager;
+    private SymbolTableManager symbolTableManager;
     private ThreeAddressCode[] PB = new ThreeAddressCode[1000];
     private int codePointer = 0, stackPointer = 1000, rA = 1003, tempMem = 4000;
     private int outputFunction = 0;
@@ -38,9 +37,9 @@ public class CodeGenerator {
     //10000-: heap
 
 
-    public CodeGenerator(SymbolTabelManager symbolTabelManager)
+    public CodeGenerator(SymbolTableManager symbolTableManager)
     {
-        this.symbolTabelManager = symbolTabelManager;
+        this.symbolTableManager = symbolTableManager;
         this.ok = true;
         SS = new ArrayList<>();
         signedFactorName = "";
@@ -56,7 +55,12 @@ public class CodeGenerator {
         // code for output function
         PB[codePointer] = new ThreeAddressCode("PRINT", "@"+ stackPointer, "", "");
         codePointer++;
-        PB[codePointer] = new ThreeAddressCode("JP", "@1003", "", "");
+        PB[codePointer] = new ThreeAddressCode("SUB", "#1", String.valueOf(stackPointer), String.valueOf(stackPointer));
+        codePointer++;
+        tempMem = getTemporary();
+        PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(tempMem), "");
+        codePointer++;
+        PB[codePointer] = new ThreeAddressCode("JP", "@"+tempMem, "", "");
         codePointer++;
 
         // initializing stack pointer
@@ -100,7 +104,7 @@ public class CodeGenerator {
                     makeError(line_no, "Illegal type of void.");
                 break;
             case "finalize_declaration1":
-                symbolTabelManager.insert("var", idName.get(idName.size() - 1), declarationType, var_len, dimension, 0);
+                symbolTableManager.insert("var", idName.get(idName.size() - 1), declarationType, var_len, dimension, 0);
                 declarationType = "";
                 idName.remove(idName.size() - 1);
                 dimension = line = -1;
@@ -109,8 +113,8 @@ public class CodeGenerator {
             case "start_function":
                 functionParams = new ArrayList<>();
                 functionParamNames = new ArrayList<>();
-                symbolTabelManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer);
-                symbolTabelManager.addScope();
+                symbolTableManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer);
+                symbolTableManager.addScope();
                 param = "";
                 paramType = "";
                 paramDimension = 0;
@@ -119,7 +123,7 @@ public class CodeGenerator {
                 codePointer++;
                 break;
             case "zero_param":
-                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 entry.setParams(functionParams);
                 break;
             case "add_param_type":
@@ -142,7 +146,7 @@ public class CodeGenerator {
                 else
                     gType = "var";
                 // setting relative address to the top of the stack later
-                symbolTabelManager.insert(gType, param, paramType, 1, paramDimension, line, 0);
+                symbolTableManager.insert(gType, param, paramType, 1, paramDimension, line, 0);
                 functionParams.add(paramType+paramDimension);
                 functionParamNames.add(param);
                 param = "";
@@ -151,7 +155,7 @@ public class CodeGenerator {
                 paramCnt++;
                 break;
             case "add_function_params":
-                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 entry.setParams(functionParams);
                 int paramNo = functionParams.size();
                 for(int i = 0; i < paramNo; i++)
@@ -162,22 +166,22 @@ public class CodeGenerator {
                         gType = "var";
                     else
                         gType = "function";
-                    entry = symbolTabelManager.lookup(gType, paramName);
+                    entry = symbolTableManager.lookup(gType, paramName);
                     entry.setAddress( -paramNo + i);
                 }
                 functionParams = new ArrayList<>();
                 paramCnt = 0;
                 break;
             case "end_compound_statement":
-                ArrayList<Integer> breaks = symbolTabelManager.lookup_scope_breaks();
+                ArrayList<Integer> breaks = symbolTableManager.lookup_scope_breaks();
                 for (int i = 0; i < breaks.size(); i++)
                 {
                     PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
                 }
-                symbolTabelManager.removeScope();
+                symbolTableManager.removeScope();
                 break;
             case "fix_continue":
-                int tmp_line = symbolTabelManager.get_last_loop_start();
+                int tmp_line = symbolTableManager.get_last_loop_start();
                 if (tmp_line == -1)
                     makeError(line_no, "No \'while\' found for \'continue\'");
                 PB[codePointer] = new ThreeAddressCode("JP",  "#"+tmp_line, "", "");
@@ -186,7 +190,7 @@ public class CodeGenerator {
             case "add_break":
                 if (switchOrLoops == 0)
                     makeError(line_no, "No \'while\' or \'switch\' found for \'break\'");
-                symbolTabelManager.insert_break(codePointer);
+                symbolTableManager.insert_break(codePointer);
                 codePointer++;
                 break;
             case "pop_result":
@@ -195,35 +199,35 @@ public class CodeGenerator {
             case "label_if1":
                 SS.add(codePointer);
                 codePointer++;
-                symbolTabelManager.addScope();
+                symbolTableManager.addScope();
                 break;
             case "label_if2":
                 SS.add(codePointer);
                 codePointer++;
-                symbolTabelManager.removeScope();
+                symbolTableManager.removeScope();
                 break;
             case "fill_if1":
                 int label = SS.get(SS.size() - 2);
                 int expressionResult = SS.get(SS.size() - 3);
                 PB[label] = new ThreeAddressCode("JPF", String.valueOf(expressionResult),String.valueOf(codePointer), "");
-                symbolTabelManager.addScope();
+                symbolTableManager.addScope();
                 break;
             case "fill_if2":
                 label = SS.get(SS.size()-1);
                 PB[label] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
-                symbolTabelManager.removeScope();
+                symbolTableManager.removeScope();
                 for (int i = 0; i < 3; i++)
                     SS.remove(SS.size() - 1);
                 break;
             case "label_while":
                 SS.add(codePointer);
-                symbolTabelManager.insert_loop_start(codePointer);
+                symbolTableManager.insert_loop_start(codePointer);
                 switchOrLoops++;
                 break;
             case "save_while":
                 SS.add(codePointer);
                 codePointer++;
-                symbolTabelManager.addScope();
+                symbolTableManager.addScope();
                 break;
             case "fill_while":
                 label = SS.get(SS.size() - 1);
@@ -237,15 +241,15 @@ public class CodeGenerator {
                     SS.remove(SS.size() - 1);
 
                 //filling breaks
-                breaks = symbolTabelManager.lookup_scope_breaks();
+                breaks = symbolTableManager.lookup_scope_breaks();
                 for (int i = 0 ; i < breaks.size(); i++)
                     PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
 
-                symbolTabelManager.removeScope();
+                symbolTableManager.removeScope();
                 switchOrLoops--;
                 break;
             case "return1":
-                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 offset = entry.getParams().size() + 1;
                 PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
                 codePointer++;
@@ -255,7 +259,7 @@ public class CodeGenerator {
                 codePointer++;
                 break;
             case "return2":
-                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 offset = entry.getParams().size() + 1;
                 PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
                 codePointer++;
@@ -268,7 +272,7 @@ public class CodeGenerator {
                 SS.remove(SS.size()-1);
                 break;
             case "return3":
-                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 offset = entry.getParams().size() + 1;
                 PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
                 codePointer++;
@@ -283,17 +287,18 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.add(offset);
-                symbolTabelManager.removeScope();
+                symbolTableManager.removeScope();
                 break;
             case "add_switch_scope":
-                symbolTabelManager.addScope();
+                symbolTableManager.addScope();
                 switchOrLoops++;
                 break;
             case "remove_switch_scope":
-                breaks = symbolTabelManager.lookup_scope_breaks();
+                breaks = symbolTableManager.lookup_scope_breaks();
                 for (int i = 0 ; i < breaks.size(); i++)
                     PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
-                symbolTabelManager.removeScope();
+                SS.remove(SS.size() - 1);
+                symbolTableManager.removeScope();
                 switchOrLoops--;
                 break;
             case "save_case":
@@ -305,9 +310,9 @@ public class CodeGenerator {
                 label = SS.get(SS.size() - 2);
                 int num = SS.get(SS.size() - 1);
                 expressionResult = SS.get(SS.size() - 3);
-                int t = getTemporary();
-                PB[label] = new ThreeAddressCode("EQ", String.valueOf(expressionResult), "#" + num, String.valueOf(t) );
-                PB[label + 1] = new ThreeAddressCode("JPF", String.valueOf(t), String.valueOf(codePointer), "");
+                tempMem = getTemporary();
+                PB[label] = new ThreeAddressCode("EQ", String.valueOf(expressionResult), "#" + num, String.valueOf(tempMem) );
+                PB[label + 1] = new ThreeAddressCode("JPF", String.valueOf(tempMem), String.valueOf(codePointer), "");
                 for (int i = 0 ; i < 2; i++)
                     SS.remove(SS.size() - 1);
                 break;
@@ -318,7 +323,7 @@ public class CodeGenerator {
                 idName.add(peek.getString());
                 break;
             case "pid2":
-                entry = symbolTabelManager.lookup("var", idName.get(idName.size() - 1));
+                entry = symbolTableManager.lookup("var", idName.get(idName.size() - 1));
                 if (entry == null)
                     makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
                 idName.remove(idName.size() - 1);
@@ -416,7 +421,7 @@ public class CodeGenerator {
                 SS.add(offset);
                 break;
             case "pre_call":
-                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 if (entry == null)
                     makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
                 SS.add(0);
@@ -448,7 +453,10 @@ public class CodeGenerator {
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", "#"+offset, String.valueOf(tempMem), "");
                 codePointer++;
                 addressString = String.valueOf(SS.get(SS.size() - 2));
-                PB[codePointer] = new ThreeAddressCode("JP", addressString,"","");
+                tempMem = getTemporary();
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, String.valueOf(tempMem), "");
+                codePointer++;
+                PB[codePointer] = new ThreeAddressCode("JP", "@"+tempMem,"","");
                 codePointer++;
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);

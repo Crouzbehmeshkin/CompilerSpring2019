@@ -1,23 +1,31 @@
 import java.util.ArrayList;
 import java.util.HashMap;
 
-public class SymbolTabelManager {
+public class SymbolTableManager {
     private ArrayList<HashMap<SymbolTableKey, SymbolTableEntry>> symbolTables;
     private ArrayList<ArrayList<Integer> > breaks;
     private ArrayList<Integer> loopStarts;
     private int address;
 
-    public SymbolTabelManager()
+    public SymbolTableManager()
     {
         symbolTables = new ArrayList<>();
         HashMap<SymbolTableKey, SymbolTableEntry> globalSymbolTable = new HashMap<>();
         symbolTables.add(globalSymbolTable);
 
+        address = 1004;
+
+        SymbolTableKey key = new SymbolTableKey("function", "output");
+        ArrayList<String> params = new ArrayList<>();
+        params.add("int0");
+        SymbolTableEntry entry = new SymbolTableEntry(address, "int", 0, 0, 0, params);
+        address++;
+        globalSymbolTable.put(key, entry);
+
         breaks = new ArrayList<>();
         breaks.add(new ArrayList<>());
 
         loopStarts = new ArrayList<>();
-        address = 1004;
     }
 
     public void addScope()
