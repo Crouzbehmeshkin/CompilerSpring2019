@@ -80,6 +80,8 @@ public class CodeGenerator {
     {
         if (!ok)
             return;
+        if (!routineName.equals(""))
+            System.out.println(routineName);
         switch(routineName)
         {
             case "type_specifier1":
@@ -245,7 +247,7 @@ public class CodeGenerator {
                 for (int i = 0 ; i < breaks.size(); i++)
                     PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
 
-                symbolTableManager.removeScope();
+                symbolTableManager.removeLoopScope();
                 switchOrLoops--;
                 break;
             case "return1":
@@ -282,7 +284,7 @@ public class CodeGenerator {
                 codePointer++;
 
                 idName.remove(idName.size() - 1);
-                PB[SS.get(SS.size() - 2)] = new ThreeAddressCode("JP", "#"+codePointer, "", "");
+                PB[SS.get(SS.size() - 2)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
                 offset = SS.get(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);

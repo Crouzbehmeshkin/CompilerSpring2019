@@ -39,6 +39,12 @@ public class SymbolTableManager {
     {
         symbolTables.remove(symbolTables.size() - 1);
         breaks.remove(breaks.size() - 1);
+    }
+
+    public void removeLoopScope()
+    {
+        symbolTables.remove(symbolTables.size() - 1);
+        breaks.remove(breaks.size() - 1);
         loopStarts.remove(loopStarts.size() - 1);
     }
 
@@ -59,6 +65,7 @@ public class SymbolTableManager {
         {
             entry = new SymbolTableEntry(-1, type, dimension, line, -1, new ArrayList<>());
         }
+        top.put(key, entry);
     }
 
     public void insert(String g_type, String var_name, String type, int len, int dimension, int line, int address) {
@@ -78,13 +85,14 @@ public class SymbolTableManager {
         {
             entry = new SymbolTableEntry(address, type, dimension, line, -1, new ArrayList<>());
         }
+        top.put(key, entry);
     }
 
     public SymbolTableEntry lookup(String g_type, String var_name)
     {
         SymbolTableKey key = new SymbolTableKey(g_type, var_name);
         int index = symbolTables.size() - 1;
-        while(index > 0)
+        while(index >= 0)
         {
             if (symbolTables.get(index).containsKey(key))
                 return symbolTables.get(index).get(key);
