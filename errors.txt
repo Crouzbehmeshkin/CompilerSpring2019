@@ -1,5 +1,0 @@
-7. (SYNTAX ERROR!, Missing signed-factor)
-13. (SYNTAX ERROR!, Unexpected =)(SYNTAX ERROR!, Missing type)
-14. (SYNTAX ERROR!, Missing ()
-16. (SYNTAX ERROR!, Unexpected [)(SYNTAX ERROR!, Unexpected *)
-19. (SYNTAX ERROR!, Missing return-stmtB)

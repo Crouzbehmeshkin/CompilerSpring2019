@@ -1,0 +1,5 @@
+program
+	.declaration-list
+	.	.declaration-listB
+	.	.	.epsilon
+	.EOF

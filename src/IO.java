@@ -141,18 +141,29 @@ public class IO {
 
                     Matcher tm = tPattern.matcher(split[i]);
                     Matcher nonTM = nonTPattern.matcher(split[i]);
+                    TerminalEdge newTerminalEdge ;
 
                     if(tm.find()){
                         String[] edgeSplit;
                         edgeSplit = split[i].split(", ");
-                        String[] resultNode = edgeSplit[3].split("\\)");
-                        Token newToken = new Token(edgeSplit[1] , edgeSplit[2].substring(1, edgeSplit[2].length() - 1) , 0);
-                        TerminalEdge newTerminalEdge = new TerminalEdge(Integer.valueOf(resultNode[0]) , newToken);
-                        if(edgeSplit[4] != null){
-                            String[] lastSplit = edgeSplit[4].split("\\)");
 
-                            newTerminalEdge.setRoutine(lastSplit[0]);
+                        if(edgeSplit.length == 4){
+                            String[] resultNode = edgeSplit[3].split("\\)");
+                            Token newToken = new Token(edgeSplit[1] , edgeSplit[2].substring(1, edgeSplit[2].length() - 1) , 0);
+                             newTerminalEdge = new TerminalEdge(Integer.valueOf(resultNode[0]) , newToken);
+
                         }
+                        else {
+                            Token newToken = new Token(edgeSplit[1] , edgeSplit[2].substring(1, edgeSplit[2].length() - 1) , 0);
+                            newTerminalEdge = new TerminalEdge(Integer.valueOf(edgeSplit[3]) , newToken);
+                            if(edgeSplit[4] != null){
+                                String[] lastSplit = edgeSplit[4].split("\\)");
+
+                                newTerminalEdge.setRoutine(lastSplit[0]);
+                            }
+
+                        }
+
                         newNode.getEdges().add(newTerminalEdge);
 
 
@@ -161,14 +172,24 @@ public class IO {
                     else if(nonTM.find()){
                         String[] edgeSplit ;
                         edgeSplit = split[i].split(", ");
-                        String[] returnNode = edgeSplit[3].split("\\)");
 
-                        NonTerminalEdge newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeSplit[2]) , Integer.valueOf(returnNode[0]) , edgeSplit[1] );
-                        if(edgeSplit[4] != null && edgeSplit[5] != null){
-                            String[] lastSplit  = edgeSplit[5].split("\\)");
-                            newNonTerminalEdge.setRoutineBefore(edgeSplit[4]);
-                            newNonTerminalEdge.setRoutineAfter(lastSplit[0]);
+                        NonTerminalEdge newNonTerminalEdge ;
+                        if(edgeSplit.length  == 4){
+                            String[] returnNode = edgeSplit[3].split("\\)");
+                             newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeSplit[2]) , Integer.valueOf(returnNode[0]) , edgeSplit[1] );
                         }
+
+                        else{
+                           newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeSplit[2]) , Integer.valueOf(edgeSplit[3]) , edgeSplit[1] );
+                            if(edgeSplit[4] != null ){
+                                String[] lastSplit  = edgeSplit[5].split("\\)");
+                                newNonTerminalEdge.setRoutineBefore(edgeSplit[4]);
+                                newNonTerminalEdge.setRoutineAfter(lastSplit[0]);
+                            }
+                        }
+
+
+
                         newNode.getEdges().add(newNonTerminalEdge);
 
                     }
