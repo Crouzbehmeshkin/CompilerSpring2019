@@ -9,6 +9,7 @@ public class SymbolTabelManager {
 
     public SymbolTabelManager()
     {
+        symbolTables = new ArrayList<>();
         HashMap<SymbolTableKey, SymbolTableEntry> globalSymbolTable = new HashMap<>();
         symbolTables.add(globalSymbolTable);
 
@@ -101,7 +102,9 @@ public class SymbolTabelManager {
 
     public int get_last_loop_start()
     {
-        return loopStarts.get(loopStarts.size() - 1);
+        if (loopStarts.size() > 0)
+            return loopStarts.get(loopStarts.size() - 1);
+        return -1;
     }
 
 }

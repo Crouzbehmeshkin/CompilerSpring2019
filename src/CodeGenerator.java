@@ -20,8 +20,11 @@ public class CodeGenerator {
     private int tmp_num;
     private int addop, relop;
     private int offset;
+    private int switchOrLoops;
 
     public boolean ok;
+
+    private ArrayList<Error> errors;
 
     //1000: stack pointer
     //1001: frame pointer
@@ -46,6 +49,9 @@ public class CodeGenerator {
         addop = 0;
         relop = 0;
         offset = 0;
+        switchOrLoops = 0;
+
+        errors = ErrorManager.errors;
 
         // code for output function
         PB[codePointer] = new ThreeAddressCode("PRINT", "@"+ stackPointer, "", "");
@@ -66,7 +72,7 @@ public class CodeGenerator {
         return tempMem++;
     }
 
-    public void runSemanticRoutine(String routineName, Token peek)
+    public void runSemanticRoutine(String routineName, Token peek, int line_no)
     {
         if (!ok)
             return;
@@ -84,10 +90,14 @@ public class CodeGenerator {
             case "save_dimension":
                 dimension = 1;
                 var_len = 4 * Integer.valueOf(peek.getString());
+                if (declarationType.equals("void"))
+                    makeError(line_no, "Illegal type of void.");
                 break;
             case "simple_var":
                 dimension = 0;
                 var_len = 4;
+                if (declarationType.equals("void"))
+                    makeError(line_no, "Illegal type of void.");
                 break;
             case "finalize_declaration1":
                 symbolTabelManager.insert("var", idName.get(idName.size() - 1), declarationType, var_len, dimension, 0);
@@ -168,10 +178,14 @@ public class CodeGenerator {
                 break;
             case "fix_continue":
                 int tmp_line = symbolTabelManager.get_last_loop_start();
-                PB[codePointer] = new ThreeAddressCode("JP",  String.valueOf(tmp_line), "", "");
+                if (tmp_line == -1)
+                    makeError(line_no, "No \'while\' found for \'continue\'");
+                PB[codePointer] = new ThreeAddressCode("JP",  "#"+tmp_line, "", "");
                 codePointer++;
                 break;
             case "add_break":
+                if (switchOrLoops == 0)
+                    makeError(line_no, "No \'while\' or \'switch\' found for \'break\'");
                 symbolTabelManager.insert_break(codePointer);
                 codePointer++;
                 break;
@@ -204,6 +218,7 @@ public class CodeGenerator {
             case "label_while":
                 SS.add(codePointer);
                 symbolTabelManager.insert_loop_start(codePointer);
+                switchOrLoops++;
                 break;
             case "save_while":
                 SS.add(codePointer);
@@ -227,6 +242,7 @@ public class CodeGenerator {
                     PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
 
                 symbolTabelManager.removeScope();
+                switchOrLoops--;
                 break;
             case "return1":
                 entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
@@ -271,12 +287,14 @@ public class CodeGenerator {
                 break;
             case "add_switch_scope":
                 symbolTabelManager.addScope();
+                switchOrLoops++;
                 break;
             case "remove_switch_scope":
                 breaks = symbolTabelManager.lookup_scope_breaks();
                 for (int i = 0 ; i < breaks.size(); i++)
                     PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
                 symbolTabelManager.removeScope();
+                switchOrLoops--;
                 break;
             case "save_case":
                 SS.add(codePointer);
@@ -301,6 +319,8 @@ public class CodeGenerator {
                 break;
             case "pid2":
                 entry = symbolTabelManager.lookup("var", idName.get(idName.size() - 1));
+                if (entry == null)
+                    makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
                 idName.remove(idName.size() - 1);
                 SS.add(entry.getAddress());
                 break;
@@ -397,6 +417,8 @@ public class CodeGenerator {
                 break;
             case "pre_call":
                 entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                if (entry == null)
+                    makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
                 SS.add(0);
                 SS.add(entry.getLine());
                 SS.add(entry.getParams().size());
@@ -414,10 +436,7 @@ public class CodeGenerator {
                 break;
             case "call":
                 if (SS.get(SS.size()- 3) != SS.get(SS.size() - 1))
-                {
-                    //semantic error
-                    // Mismatch in number of arguments of idName.get(idName.size() - 1)
-                }
+                    makeError(line_no, "Mismatch in number of arguments of " + idName.get(idName.size() - 1));
                 idName.remove(idName.size() - 1);
 
                 offset = SS.get(SS.size() - 1) + 1;
@@ -459,5 +478,12 @@ public class CodeGenerator {
             return "@"+tempMem;
         }
         return ret;
+    }
+
+    private void makeError(int line, String message)
+    {
+        Error error = new Error(line, "SEMANTIC ERROR!", message);
+        ErrorManager.errors.add(error);
+        ok = false;
     }
 }

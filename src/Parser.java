@@ -374,7 +374,7 @@ public class Parser {
                 stack.remove(stack.size() - 1);
                 currentNonTerminals.remove(currentNonTerminals.size() - 1);
 
-                codeGenerator.runSemanticRoutine(routineStack.get(routineStack.size() - 1), peek);
+                codeGenerator.runSemanticRoutine(routineStack.get(routineStack.size() - 1), peek, line_no);
                 routineStack.remove(routineStack.size() - 1);
                 continue;
             }
@@ -394,7 +394,7 @@ public class Parser {
                             {
                                 nextstate = t_edge.getResultingNode();
                                 io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
-                                codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
+                                codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek, line_no);
                                 break;
                             }
                         }
@@ -404,7 +404,7 @@ public class Parser {
                             {
                                 nextstate = t_edge.getResultingNode();
                                 io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
-                                codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
+                                codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek, line_no);
                                 break;
                             }
                         }
@@ -417,7 +417,7 @@ public class Parser {
                             nextstate = t_edge.getResultingNode();
                             io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getType());
                             read_next_peek = true;
-                            codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
+                            codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek, line_no);
                             break;
                         }
                         else if (t_edge.getToken().getString().equals(peek.getString()))
@@ -425,7 +425,7 @@ public class Parser {
                             nextstate = t_edge.getResultingNode();
                             io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
                             read_next_peek = true;
-                            codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
+                            codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek, line_no);
                             break;
                         }
                     }
@@ -462,7 +462,7 @@ public class Parser {
                     if (nextstate != 0)
                     {
                         io.writeParseTreeNode(currentNonTerminals.size() - 1, nt_edge_string);
-                        codeGenerator.runSemanticRoutine(nt_edge.getRoutineBefore(), peek);
+                        codeGenerator.runSemanticRoutine(nt_edge.getRoutineBefore(), peek, line_no);
                         break;
                     }
 
@@ -473,7 +473,7 @@ public class Parser {
                         if (nextstate != 0)
                         {
                             io.writeParseTreeNode(currentNonTerminals.size() - 1, nt_edge_string);
-                            codeGenerator.runSemanticRoutine(nt_edge.getRoutineBefore(), peek);
+                            codeGenerator.runSemanticRoutine(nt_edge.getRoutineBefore(), peek, line_no);
                             break;
                         }
                     }
