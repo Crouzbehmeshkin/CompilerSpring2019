@@ -1,0 +1,233 @@
+program
+	.declaration-list
+	.	.declaration-listB
+	.	.	.declaration
+	.	.	.	.type-specifier
+	.	.	.	.	.void
+	.	.	.	.ID
+	.	.	.	.type
+	.	.	.	.	.(
+	.	.	.	.	.params
+	.	.	.	.	.	.void
+	.	.	.	.	.	.paramsB
+	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.)
+	.	.	.	.	.compound-stmt
+	.	.	.	.	.	.{
+	.	.	.	.	.	.declaration-list
+	.	.	.	.	.	.	.declaration-listB
+	.	.	.	.	.	.	.	.declaration
+	.	.	.	.	.	.	.	.	.type-specifier
+	.	.	.	.	.	.	.	.	.	.int
+	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.type
+	.	.	.	.	.	.	.	.	.	.var-declarationB
+	.	.	.	.	.	.	.	.	.	.	.;
+	.	.	.	.	.	.	.	.declaration-listB
+	.	.	.	.	.	.	.	.	.declaration
+	.	.	.	.	.	.	.	.	.	.type-specifier
+	.	.	.	.	.	.	.	.	.	.	.int
+	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.type
+	.	.	.	.	.	.	.	.	.	.	.var-declarationB
+	.	.	.	.	.	.	.	.	.	.	.	.[
+	.	.	.	.	.	.	.	.	.	.	.	.NUM
+	.	.	.	.	.	.	.	.	.	.	.	.]
+	.	.	.	.	.	.	.	.	.	.	.	.;
+	.	.	.	.	.	.	.	.	.declaration-listB
+	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.statement-list
+	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.statement
+	.	.	.	.	.	.	.	.	.expression-stmt
+	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.expressionC
+	.	.	.	.	.	.	.	.	.	.	.	.	.=
+	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.signed-factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.NUM
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.;
+	.	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.	.statement
+	.	.	.	.	.	.	.	.	.	.selection-stmt
+	.	.	.	.	.	.	.	.	.	.	.if
+	.	.	.	.	.	.	.	.	.	.	.(
+	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.expressionC
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.relop
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.<
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.signed-factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.NUM
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.)
+	.	.	.	.	.	.	.	.	.	.	.statement
+	.	.	.	.	.	.	.	.	.	.	.	.compound-stmt
+	.	.	.	.	.	.	.	.	.	.	.	.	.{
+	.	.	.	.	.	.	.	.	.	.	.	.	.declaration-list
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.declaration-listB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.statement-list
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.statement
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression-stmt
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionC
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.=
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionC
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.addop
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.+
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.term
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factorB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.[
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.signed-factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.NUM
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.]
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.;
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.}
+	.	.	.	.	.	.	.	.	.	.	.else
+	.	.	.	.	.	.	.	.	.	.	.statement
+	.	.	.	.	.	.	.	.	.	.	.	.compound-stmt
+	.	.	.	.	.	.	.	.	.	.	.	.	.{
+	.	.	.	.	.	.	.	.	.	.	.	.	.declaration-list
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.declaration-listB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.statement-list
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.statement
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression-stmt
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionC
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.=
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.signed-factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.-
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factor
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factorB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.addop
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.+
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.term
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.signed-factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.NUM
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.;
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.}
+	.	.	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.	.	.statement
+	.	.	.	.	.	.	.	.	.	.	.expression-stmt
+	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.	.expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.(
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.args
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.arg-list
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.ID
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.varB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.[
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expression
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.signed-factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.factorA
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.NUM
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.]
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.expressionC
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.arg-listB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.)
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.termB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.additive-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.simple-expressionB
+	.	.	.	.	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.	.	.	.	.	.	.;
+	.	.	.	.	.	.	.	.	.	.statement-listB
+	.	.	.	.	.	.	.	.	.	.	.epsilon
+	.	.	.	.	.	.}
+	.	.	.declaration-listB
+	.	.	.	.epsilon
+	.EOF

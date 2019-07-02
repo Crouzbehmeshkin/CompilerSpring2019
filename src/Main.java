@@ -21,7 +21,7 @@ public class Main {
 
         io.openThreeAddressCodeFile();
         io.printThreeAddressCode(codeGenerator.getPB());
-        io.closeParseTreeFile();
+        io.closeThreeAddressCodeFile();
 
         //io.printTokens(tokens);
         io.printErrors(ErrorManager.errors);

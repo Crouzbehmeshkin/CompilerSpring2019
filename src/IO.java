@@ -12,7 +12,7 @@ public class IO {
 
         try{
 
-            InputStream in = new FileInputStream("Parser/Test - Parser.txt");
+            InputStream in = new FileInputStream("input.txt");
             Reader r = new InputStreamReader(in, "US-ASCII");
             int reader;
             while ((reader = r.read()) != -1) {
@@ -261,12 +261,12 @@ public class IO {
         }
     }
 
-    BufferedWriter codeWriter;
+    private BufferedWriter codeWriter;
     public void openThreeAddressCodeFile()
     {
         try
         {
-            codeWriter = new BufferedWriter(new FileWriter("IntermediateCode.txt"));
+            codeWriter = new BufferedWriter(new FileWriter("output.txt"));
         }
         catch (Exception e)
         {
@@ -275,16 +275,19 @@ public class IO {
     }
     public void printThreeAddressCode(ThreeAddressCode[] PB)
     {
-        for (int i = 0 ; i < 1000; i++)
-        {
-            try {
+        try {
+            for (int i = 0; i < 1000; i++) {
                 if (PB[i] != null) {
-                    codeWriter.write(PB[i].getCode() + "\n");
-                    System.out.println(i);
+                    codeWriter.write(i + "\t");
+                    codeWriter.write(String.valueOf(PB[i].getCode()));
+                    codeWriter.write("\n");
+                    System.out.println("wrote line " + i);
                 }
-            } catch (IOException e) {
-                e.printStackTrace();
             }
+        }
+        catch (IOException e)
+        {
+            e.printStackTrace();
         }
     }
 

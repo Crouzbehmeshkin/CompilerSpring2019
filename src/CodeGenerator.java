@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class CodeGenerator {
     private SymbolTableManager symbolTableManager;
     private ThreeAddressCode[] PB = new ThreeAddressCode[1000];
-    private int codePointer = 0, stackPointer = 1000, rA = 1003, tempMem = 4000;
+    private int codePointer = 0, stackPointer = 1000, rA = 1003, tempAddress = 4000;
     private int outputFunction = 0;
 
     private ArrayList<String> idName;
@@ -12,14 +12,16 @@ public class CodeGenerator {
     private ArrayList<String> functionParams, functionParamNames;
     private String param, paramType;
     private int paramDimension, paramCnt;
-    private ArrayList<Integer> SS;
+    private ArrayList<Integer> SS, breaks;
     private String signedFactorName;
     private int idAddress;
     private String addressString, addressString2;
-    private int tmp_num;
+    private int tempMem;
     private int addop, relop;
     private int offset;
     private int switchOrLoops;
+    private ArrayList<String> typeStack;
+    private String type1, type2;
 
     public boolean ok;
 
@@ -49,13 +51,23 @@ public class CodeGenerator {
         relop = 0;
         offset = 0;
         switchOrLoops = 0;
+        typeStack = new ArrayList<>();
 
         errors = ErrorManager.errors;
+        // initializing stack pointer
+        PB[codePointer] = new ThreeAddressCode("ASSIGN", "#5000", "1000", "");
+        codePointer++;
 
         // code for output function
-        PB[codePointer] = new ThreeAddressCode("PRINT", "@"+ stackPointer, "", "");
         codePointer++;
-        PB[codePointer] = new ThreeAddressCode("SUB", "#1", String.valueOf(stackPointer), String.valueOf(stackPointer));
+        PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#1", String.valueOf(stackPointer));
+        codePointer++;
+        tempMem = getTemporary();
+        PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(tempMem), "");
+        codePointer++;
+        PB[codePointer] = new ThreeAddressCode("PRINT", String.valueOf(tempMem), "", "");
+        codePointer++;
+        PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#1", String.valueOf(stackPointer));
         codePointer++;
         tempMem = getTemporary();
         PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(tempMem), "");
@@ -63,9 +75,6 @@ public class CodeGenerator {
         PB[codePointer] = new ThreeAddressCode("JP", "@"+tempMem, "", "");
         codePointer++;
 
-        // initializing stack pointer
-        PB[codePointer] = new ThreeAddressCode("ASSIGN", "#5000", "1000", "");
-        codePointer++;
     }
 
     private String declarationType;
@@ -73,7 +82,7 @@ public class CodeGenerator {
 
     private int getTemporary()
     {
-        return tempMem++;
+        return tempAddress++;
     }
 
     public void runSemanticRoutine(String routineName, Token peek, int line_no)
@@ -116,6 +125,11 @@ public class CodeGenerator {
                 functionParams = new ArrayList<>();
                 functionParamNames = new ArrayList<>();
                 symbolTableManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer);
+                if (idName.get(idName.size() - 1).equals("main") && symbolTableManager.getScopeNo() == 1)
+                {
+                    PB[1] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+                    codePointer--;
+                }
                 symbolTableManager.addScope();
                 param = "";
                 paramType = "";
@@ -174,12 +188,13 @@ public class CodeGenerator {
                 functionParams = new ArrayList<>();
                 paramCnt = 0;
                 break;
+            case "start_compound_statement":
+                symbolTableManager.addScope();
+                break;
             case "end_compound_statement":
-                ArrayList<Integer> breaks = symbolTableManager.lookup_scope_breaks();
+                breaks = symbolTableManager.lookup_scope_breaks();
                 for (int i = 0; i < breaks.size(); i++)
-                {
                     PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
-                }
                 symbolTableManager.removeScope();
                 break;
             case "fix_continue":
@@ -197,6 +212,7 @@ public class CodeGenerator {
                 break;
             case "pop_result":
                 SS.remove(SS.size() - 1);
+                typeStack.remove(typeStack.size() - 1);
                 break;
             case "label_if1":
                 SS.add(codePointer);
@@ -253,7 +269,7 @@ public class CodeGenerator {
             case "return1":
                 entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 offset = entry.getParams().size() + 1;
-                PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
+                PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+offset, String.valueOf(stackPointer));
                 codePointer++;
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(rA),"");
                 codePointer++;
@@ -263,7 +279,7 @@ public class CodeGenerator {
             case "return2":
                 entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 offset = entry.getParams().size() + 1;
-                PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
+                PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+offset, String.valueOf(stackPointer));
                 codePointer++;
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(rA),"");
                 codePointer++;
@@ -274,9 +290,19 @@ public class CodeGenerator {
                 SS.remove(SS.size()-1);
                 break;
             case "return3":
+                if (idName.get(idName.size() - 1).equals("main"))
+                {
+                    SS.remove(SS.size() - 1);
+                    idName.remove(idName.size() - 1);
+                    breaks = symbolTableManager.lookup_scope_breaks();
+                    for (int i = 0; i < breaks.size(); i++)
+                        PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+                    symbolTableManager.removeScope();
+                    break;
+                }
                 entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 offset = entry.getParams().size() + 1;
-                PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
+                PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+offset, String.valueOf(stackPointer));
                 codePointer++;
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(rA),"");
                 codePointer++;
@@ -286,6 +312,10 @@ public class CodeGenerator {
                 idName.remove(idName.size() - 1);
                 PB[SS.get(SS.size() - 1)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
                 SS.remove(SS.size() - 1);
+
+                breaks = symbolTableManager.lookup_scope_breaks();
+                for (int i = 0; i < breaks.size(); i++)
+                    PB[breaks.get(i)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
                 symbolTableManager.removeScope();
                 break;
             case "add_switch_scope":
@@ -327,8 +357,15 @@ public class CodeGenerator {
                     makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
                 idName.remove(idName.size() - 1);
                 SS.add(entry.getAddress());
+                typeStack.add(entry.getType() + entry.getDimension());
                 break;
             case "find_array_address":
+                if (typeStack.get(typeStack.size() - 1).equals("void0") || typeStack.get(typeStack.size() - 1).equals("void1"))
+                {
+                    makeError(line_no, "array index is void");
+                    return;
+                }
+
                 tempMem = getTemporary();
                 addressString = getAddressString(SS.get(SS.size() - 1));
                 PB[codePointer] = new ThreeAddressCode("MULT", addressString, "#4", String.valueOf(tempMem));
@@ -345,11 +382,18 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.add(-tempMem);
+                typeStack.remove(typeStack.size() - 1);
+                type1 = typeStack.get(typeStack.size() - 1);
+                type1 = type1.substring(0, type1.length()-1) + "0";
+                typeStack.remove(typeStack.size() - 1);
+                typeStack.add(type1);
                 break;
             case "allocate_num":
                 tempMem = getTemporary();
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", "#"+peek.getString(), String.valueOf(tempMem), "");
                 codePointer++;
+                SS.add(tempMem);
+                typeStack.add("int0");
                 break;
             case "minus_factor":
                 tempMem = getTemporary();
@@ -360,6 +404,13 @@ public class CodeGenerator {
                 SS.add(tempMem);
                 break;
             case "mult_termB":
+                type1 = typeStack.get(typeStack.size() - 2);
+                type2 = typeStack.get(typeStack.size() - 1);
+                if (!type1.equals(type2) || type1.equals("void") || type1.equals("int1"))
+                {
+                    makeError(line_no, "Type mismatch in operands");
+                    return;
+                }
                 tempMem = getTemporary();
                 addressString = getAddressString(SS.get(SS.size() - 2));
                 addressString2 = getAddressString(SS.get(SS.size() - 1));
@@ -368,6 +419,7 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.add(tempMem);
+                typeStack.remove(typeStack.size() - 1);
                 break;
             case "addop1":
                 addop = 1;
@@ -376,6 +428,13 @@ public class CodeGenerator {
                 addop = 2;
                 break;
             case "add_exp":
+                type1 = typeStack.get(typeStack.size() - 2);
+                type2 = typeStack.get(typeStack.size() - 1);
+                if (!type1.equals(type2) || type1.equals("void") || type1.equals("int1"))
+                {
+                    makeError(line_no, "Type mismatch in operands");
+                    return;
+                }
                 addressString = getAddressString(SS.get(SS.size() - 2));
                 addressString2 = getAddressString(SS.get(SS.size() - 1));
                 tempMem = getTemporary();
@@ -388,6 +447,7 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 SS.add(tempMem);
                 addop = 0;
+                typeStack.remove(typeStack.size() - 1);
                 break;
             case "relop1":
                 relop = 1;
@@ -396,6 +456,13 @@ public class CodeGenerator {
                 relop = 2;
                 break;
             case "compare_exp":
+                type1 = typeStack.get(typeStack.size() - 2);
+                type2 = typeStack.get(typeStack.size() - 1);
+                if (!type1.equals(type2) || type1.equals("void") || type1.equals("int1"))
+                {
+                    makeError(line_no, "Type mismatch in operands");
+                    return;
+                }
                 addressString = getAddressString(SS.get(SS.size() - 2));
                 addressString2 = getAddressString(SS.get(SS.size() - 1));
                 tempMem = getTemporary();
@@ -408,21 +475,31 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 SS.add(tempMem);
                 relop = 0;
+                typeStack.remove(typeStack.size() - 1);
                 break;
             case "assignment":
+                type1 = typeStack.get(typeStack.size() - 2);
+                type2 = typeStack.get(typeStack.size() - 1);
+                if (!type1.equals(type2) || type1.equals("void"))
+                {
+                    makeError(line_no, "Type mismatch in operands");
+                    return;
+                }
                 addressString = getAddressString(SS.get(SS.size() - 2));
                 addressString2 = getAddressString(SS.get(SS.size() - 1));
-                PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, addressString2, "");
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString2, addressString, "");
                 codePointer++;
                 offset = SS.get(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.add(offset);
+                typeStack.remove(typeStack.size() - 1);
                 break;
             case "pre_call":
                 entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 if (entry == null)
                     makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
+                typeStack.add(entry.getType());
                 SS.add(0);
                 SS.add(entry.getLine());
                 SS.add(entry.getParams().size());
@@ -430,6 +507,15 @@ public class CodeGenerator {
                 codePointer++;
                 break;
             case "add_to_stack":
+                entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
+                type1 = entry.getParams().get(SS.get(SS.size()-4));
+                type2 = typeStack.get(typeStack.size() - 1);
+                if (!type1.equals(type2))
+                {
+                    makeError(line_no, "Mismatch in argument types");
+                    return;
+                }
+                typeStack.remove(typeStack.size() - 1);
                 addressString = getAddressString(SS.get(SS.size() - 1));
                 PB[codePointer] = new ThreeAddressCode("ASSIGN",addressString, "@"+stackPointer, "" );
                 codePointer++;
@@ -448,10 +534,10 @@ public class CodeGenerator {
                 PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+offset, String.valueOf(tempMem));
                 codePointer++;
                 //reusing offset as a tmp variable
-                offset = codePointer + 2;
-                PB[codePointer] = new ThreeAddressCode("ASSIGN", "#"+offset, String.valueOf(tempMem), "");
+                offset = codePointer + 3;
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", "#"+offset, "@"+tempMem, "");
                 codePointer++;
-                addressString = String.valueOf(SS.get(SS.size() - 2));
+                addressString = "#" + SS.get(SS.size() - 2);
                 tempMem = getTemporary();
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, String.valueOf(tempMem), "");
                 codePointer++;
