@@ -159,7 +159,8 @@ public class IO {
                             if(edgeSplit[4] != null){
                                 String[] lastSplit = edgeSplit[4].split("\\)");
 
-                                newTerminalEdge.setRoutine(lastSplit[0]);
+
+                                newTerminalEdge.setRoutine(lastSplit[0].substring(1,lastSplit[0].length() - 1 ));
                             }
 
                         }
@@ -183,8 +184,9 @@ public class IO {
                            newNonTerminalEdge = new NonTerminalEdge(Integer.valueOf(edgeSplit[2]) , Integer.valueOf(edgeSplit[3]) , edgeSplit[1] );
                             if(edgeSplit[4] != null ){
                                 String[] lastSplit  = edgeSplit[5].split("\\)");
-                                newNonTerminalEdge.setRoutineBefore(edgeSplit[4]);
-                                newNonTerminalEdge.setRoutineAfter(lastSplit[0]);
+
+                                newNonTerminalEdge.setRoutineBefore(edgeSplit[4].substring(1, edgeSplit[4].length() - 1));
+                                newNonTerminalEdge.setRoutineAfter(lastSplit[0].substring(1 , lastSplit[0].length() - 1));
                             }
                         }
 
