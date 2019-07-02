@@ -16,4 +16,8 @@ public class TerminalEdge extends Edge {
     public String getRoutine() {
         return routine;
     }
+
+    public void setRoutine(String routine) {
+        this.routine = routine;
+    }
 }

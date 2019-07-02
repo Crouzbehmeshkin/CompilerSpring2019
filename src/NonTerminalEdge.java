@@ -27,4 +27,12 @@ public class NonTerminalEdge extends Edge{
     public String getRoutineAfter() {
         return routineAfter;
     }
+
+    public void setRoutineAfter(String routineAfter) {
+        this.routineAfter = routineAfter;
+    }
+
+    public void setRoutineBefore(String routineBefore) {
+        this.routineBefore = routineBefore;
+    }
 }
