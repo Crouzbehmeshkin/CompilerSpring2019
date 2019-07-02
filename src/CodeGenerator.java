@@ -289,7 +289,7 @@ public class CodeGenerator {
                 codePointer++;
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(rA),"");
                 codePointer++;
-                addressString = getAddressString(SS.get(SS.size() - 1));
+                addressString = getAddressString2(SS.get(SS.size() - 1), offset);
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, "@"+stackPointer, "");
                 codePointer++;
                 PB[codePointer] = new ThreeAddressCode("JP", "@"+rA, "", "");
@@ -601,6 +601,32 @@ public class CodeGenerator {
             address = -address;
             tempMem = getTemporary();
             PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+address, String.valueOf(tempMem));
+            codePointer++;
+            return "@"+tempMem;
+        }
+        return ret;
+    }
+
+    private String getAddressString2(int address, int change)
+    {
+        String ret = String.valueOf(address);
+        if (address <= -4000)
+            return "@" + ret.substring(1);
+        if (address < 0)
+        {
+            address = -address - change;
+            if (address == 0)
+                return "@" + stackPointer;
+            if (address > 0)
+            {
+                tempMem = getTemporary();
+                PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+address, String.valueOf(tempMem));
+                codePointer++;
+                return "@" + tempMem;
+            }
+            tempMem = getTemporary();
+            address = -address;
+            PB[codePointer] = new ThreeAddressCode("ADD", String.valueOf(stackPointer), "#"+address, String.valueOf(tempMem));
             codePointer++;
             return "@"+tempMem;
         }

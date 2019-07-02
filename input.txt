@@ -6,20 +6,14 @@ int add(int a, int b)
 void main(void)
 {
     int a;
-    a = 10;
-    switch(a)
+    int b;
+    int p(int c, int d)
     {
-        case 1:
-            output(1);
-            break;
-        case 10: output(2);
-            break;
-        case 11:
-            output(3);
-        case 12:
-            output(4);
-            break;
-        default:
-            output(5);
+        c = c*d*2;
+        return c;
     }
+    a = 3;
+    b = 4;
+    a = a + b;
+    output(p(a,b));
 }
