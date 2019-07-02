@@ -278,17 +278,14 @@ public class CodeGenerator {
                 offset = entry.getParams().size() + 1;
                 PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
                 codePointer++;
-                PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(rA),"");
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(rA),"");
                 codePointer++;
-                PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(rA), "", "");
+                PB[codePointer] = new ThreeAddressCode("JP", "@"+rA, "", "");
                 codePointer++;
 
                 idName.remove(idName.size() - 1);
-                PB[SS.get(SS.size() - 2)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
-                offset = SS.get(SS.size() - 1);
+                PB[SS.get(SS.size() - 1)] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
                 SS.remove(SS.size() - 1);
-                SS.remove(SS.size() - 1);
-                SS.add(offset);
                 symbolTableManager.removeScope();
                 break;
             case "add_switch_scope":
