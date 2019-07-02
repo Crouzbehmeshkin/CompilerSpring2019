@@ -1,13 +1,15 @@
+int add(int a, int b)
+{
+    return a + b;
+}
+
 void main(void)
 {
     int b;
-    int a[10];
+    int a;
+    int c;
     b = 10;
-    if (b < 8){
-        b = b + a[1];
-    }
-    else{
-        b = -b + 1;
-    }
-    output(b);
+    a = 12;
+    c = add(a, b);
+    output(c);
 }

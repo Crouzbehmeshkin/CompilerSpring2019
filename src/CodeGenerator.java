@@ -288,6 +288,7 @@ public class CodeGenerator {
                 PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(rA), "", "");
                 codePointer++;
                 SS.remove(SS.size()-1);
+                typeStack.remove(typeStack.size() - 1);
                 break;
             case "return3":
                 if (idName.get(idName.size() - 1).equals("main"))
@@ -354,7 +355,10 @@ public class CodeGenerator {
             case "pid2":
                 entry = symbolTableManager.lookup("var", idName.get(idName.size() - 1));
                 if (entry == null)
+                {
                     makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
+                    return;
+                }
                 idName.remove(idName.size() - 1);
                 SS.add(entry.getAddress());
                 typeStack.add(entry.getType() + entry.getDimension());
@@ -499,7 +503,7 @@ public class CodeGenerator {
                 entry = symbolTableManager.lookup("function", idName.get(idName.size() - 1));
                 if (entry == null)
                     makeError(line_no, idName.get(idName.size() - 1) + " is not defined");
-                typeStack.add(entry.getType());
+                typeStack.add(entry.getType()+"0");
                 SS.add(0);
                 SS.add(entry.getLine());
                 SS.add(entry.getParams().size());
@@ -526,7 +530,10 @@ public class CodeGenerator {
                 break;
             case "call":
                 if (SS.get(SS.size()- 3) != SS.get(SS.size() - 1))
+                {
                     makeError(line_no, "Mismatch in number of arguments of " + idName.get(idName.size() - 1));
+                    return;
+                }
                 idName.remove(idName.size() - 1);
 
                 offset = SS.get(SS.size() - 1) + 1;
