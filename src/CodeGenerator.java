@@ -401,6 +401,10 @@ public class CodeGenerator {
                 tempMem = getTemporary();
                 addressString = getAddressString(SS.get(SS.size() - 2));
                 addressString2 = getAddressString(SS.get(SS.size() - 1));
+                if (addressString.charAt(0) == '@')
+                    addressString = addressString.substring(1);
+                else
+                    addressString = "#" + addressString;
                 PB[codePointer] = new ThreeAddressCode("ADD", addressString, addressString2, String.valueOf(tempMem));
                 codePointer++;
 

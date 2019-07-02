@@ -64,11 +64,12 @@ public class SymbolTableManager {
         if (g_type.equals("var"))
         {
             entry = new SymbolTableEntry(address, type, dimension, line, 0, new ArrayList<>());
-            address += len;
+            address += len + 4;
         }
         else
         {
             entry = new SymbolTableEntry(-1, type, dimension, line, -1, new ArrayList<>());
+            address += 4;
         }
         top.put(key, entry);
     }

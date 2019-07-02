@@ -5,15 +5,18 @@ int add(int a, int b)
 
 void main(void)
 {
-    int a;
+    int a[10];
     int b;
-    int p(int c, int d)
+    void q(int c)
     {
-        c = c*d*2;
+        output(c);
+    }
+    int p(int c, int d[])
+    {
+        c = c*d[0]*2;
         return c;
     }
-    a = 3;
+    a[0] = 7;
     b = 4;
-    a = a + b;
-    output(p(a,b));
+    q(p(b,a));
 }
