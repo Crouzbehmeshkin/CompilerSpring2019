@@ -124,11 +124,15 @@ public class CodeGenerator {
             case "start_function":
                 functionParams = new ArrayList<>();
                 functionParamNames = new ArrayList<>();
-                symbolTableManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer);
                 if (idName.get(idName.size() - 1).equals("main") && symbolTableManager.getScopeNo() == 1)
                 {
                     PB[1] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+                    symbolTableManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer);
                     codePointer--;
+                }
+                else
+                {
+                    symbolTableManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer+1);
                 }
                 symbolTableManager.addScope();
                 param = "";
@@ -271,9 +275,9 @@ public class CodeGenerator {
                 offset = entry.getParams().size() + 1;
                 PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+offset, String.valueOf(stackPointer));
                 codePointer++;
-                PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(rA),"");
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(rA),"");
                 codePointer++;
-                PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(rA), "", "");
+                PB[codePointer] = new ThreeAddressCode("JP", "@"+rA, "", "");
                 codePointer++;
                 break;
             case "return2":
@@ -281,11 +285,12 @@ public class CodeGenerator {
                 offset = entry.getParams().size() + 1;
                 PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+offset, String.valueOf(stackPointer));
                 codePointer++;
-                PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(rA),"");
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(rA),"");
                 codePointer++;
                 addressString = getAddressString(SS.get(SS.size() - 1));
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, "@"+stackPointer, "");
-                PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(rA), "", "");
+                codePointer++;
+                PB[codePointer] = new ThreeAddressCode("JP", "@"+rA, "", "");
                 codePointer++;
                 SS.remove(SS.size()-1);
                 typeStack.remove(typeStack.size() - 1);
@@ -573,7 +578,7 @@ public class CodeGenerator {
         {
             address = -address;
             tempMem = getTemporary();
-            PB[codePointer] = new ThreeAddressCode("SUB", "#"+address, String.valueOf(stackPointer), String.valueOf(tempMem));
+            PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+address, String.valueOf(tempMem));
             codePointer++;
             return "@"+tempMem;
         }
