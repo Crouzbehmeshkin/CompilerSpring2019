@@ -486,4 +486,9 @@ public class CodeGenerator {
         ErrorManager.errors.add(error);
         ok = false;
     }
+
+    public ThreeAddressCode[] getPB()
+    {
+        return PB;
+    }
 }

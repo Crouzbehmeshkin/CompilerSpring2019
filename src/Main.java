@@ -19,6 +19,10 @@ public class Main {
 
         parser.parseCode();
 
+        io.openThreeAddressCodeFile();
+        io.printThreeAddressCode(codeGenerator.getPB());
+        io.closeParseTreeFile();
+
         //io.printTokens(tokens);
         io.printErrors(ErrorManager.errors);
 

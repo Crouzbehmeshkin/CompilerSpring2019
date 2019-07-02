@@ -12,7 +12,7 @@ public class IO {
 
         try{
 
-            InputStream in = new FileInputStream("Parser/Test Error - Parser.txt");
+            InputStream in = new FileInputStream("Parser/Test - Parser.txt");
             Reader r = new InputStreamReader(in, "US-ASCII");
             int reader;
             while ((reader = r.read()) != -1) {
@@ -233,6 +233,39 @@ public class IO {
     {
         try {
             parseTreeWriter.close();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
+
+    BufferedWriter codeWriter;
+    public void openThreeAddressCodeFile()
+    {
+        try
+        {
+            codeWriter = new BufferedWriter(new FileWriter("IntermediateCode.txt"));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+    }
+    public void printThreeAddressCode(ThreeAddressCode[] PB)
+    {
+        for (int i = 0 ; i < 1000; i++)
+        {
+            try {
+                codeWriter.write(PB[i].getCode() + "\n");
+            } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+    }
+
+    public void closeThreeAddressCodeFile()
+    {
+        try {
+            codeWriter.close();
         } catch (IOException e) {
             e.printStackTrace();
         }
