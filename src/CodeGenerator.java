@@ -21,6 +21,8 @@ public class CodeGenerator {
     private int addop, relop;
     private int offset;
 
+    public boolean ok;
+
     //1000: stack pointer
     //1001: frame pointer
     //1002: temporary
@@ -36,6 +38,7 @@ public class CodeGenerator {
     public CodeGenerator(SymbolTabelManager symbolTabelManager)
     {
         this.symbolTabelManager = symbolTabelManager;
+        this.ok = true;
         SS = new ArrayList<>();
         signedFactorName = "";
         idAddress = -1;
@@ -65,6 +68,8 @@ public class CodeGenerator {
 
     public void runSemanticRoutine(String routineName, Token peek)
     {
+        if (!ok)
+            return;
         switch(routineName)
         {
             case "typeSpecifier1":
@@ -170,6 +175,9 @@ public class CodeGenerator {
                 symbolTabelManager.insert_break(codePointer);
                 codePointer++;
                 break;
+            case "pop_result":
+                SS.remove(SS.size() - 1);
+                break;
             case "label_if1":
                 SS.add(codePointer);
                 codePointer++;
@@ -237,6 +245,19 @@ public class CodeGenerator {
                 codePointer++;
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(rA),"");
                 codePointer++;
+                addressString = getAddressString(SS.get(SS.size() - 1));
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, "@"+stackPointer, "");
+                PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(rA), "", "");
+                codePointer++;
+                SS.remove(SS.size()-1);
+                break;
+            case "return3":
+                entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
+                offset = entry.getParams().size() + 1;
+                PB[codePointer] = new ThreeAddressCode("SUB", "#"+offset, String.valueOf(stackPointer), String.valueOf(stackPointer));
+                codePointer++;
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(rA),"");
+                codePointer++;
                 PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(rA), "", "");
                 codePointer++;
 
@@ -246,6 +267,7 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.add(offset);
+                symbolTabelManager.removeScope();
                 break;
             case "add_switch_scope":
                 symbolTabelManager.addScope();
@@ -368,6 +390,10 @@ public class CodeGenerator {
                 addressString2 = getAddressString(SS.get(SS.size() - 1));
                 PB[codePointer] = new ThreeAddressCode("ASSIGN", addressString, addressString2, "");
                 codePointer++;
+                offset = SS.get(SS.size() - 1);
+                SS.remove(SS.size() - 1);
+                SS.remove(SS.size() - 1);
+                SS.add(offset);
                 break;
             case "pre_call":
                 entry = symbolTabelManager.lookup("function", idName.get(idName.size() - 1));
@@ -408,6 +434,13 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);
                 SS.remove(SS.size() - 1);
+                tempMem = getTemporary();
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", "@"+stackPointer, String.valueOf(tempMem), "");
+                codePointer++;
+                SS.add(tempMem);
+                break;
+            default:
+
                 break;
         }
     }

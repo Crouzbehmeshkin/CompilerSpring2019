@@ -9,7 +9,9 @@ public class Main {
         IO io = new IO();
         ArrayList<Token> list = new ArrayList<>();
         LexicalAnalyzer lexer = new LexicalAnalyzer(io);
-        Parser parser = new Parser(io, lexer);
+        SymbolTabelManager symbolTabelManager = new SymbolTabelManager();
+        CodeGenerator codeGenerator = new CodeGenerator(symbolTabelManager);
+        Parser parser = new Parser(io, lexer, codeGenerator);
         Token token = null;
         io.readInput();
 

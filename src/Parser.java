@@ -8,14 +8,19 @@ public class Parser {
     private ArrayList<Node> nodes = new ArrayList<>();
     private IO io;
     private LexicalAnalyzer lexer;
+    private CodeGenerator codeGenerator;
     private ArrayList<Error> errors;
+    private ArrayList<String> routineStack;
 
-    public Parser(IO io, LexicalAnalyzer lexer) {
+    public Parser(IO io, LexicalAnalyzer lexer, CodeGenerator codeGenerator) {
         this.io = io;
         this.lexer = lexer;
+        this.codeGenerator = codeGenerator;
         errors = ErrorManager.errors;
         init_nodes();
         addToHashMaps();
+
+        routineStack = new ArrayList<>();
     }
 
     private void init_nodes()
@@ -368,6 +373,9 @@ public class Parser {
                 state = stack.get(stack.size() - 1);
                 stack.remove(stack.size() - 1);
                 currentNonTerminals.remove(currentNonTerminals.size() - 1);
+
+                codeGenerator.runSemanticRoutine(routineStack.get(routineStack.size() - 1), peek);
+                routineStack.remove(routineStack.size() - 1);
                 continue;
             }
             for (int i = 0; i < edges.size(); i++) {
@@ -386,6 +394,7 @@ public class Parser {
                             {
                                 nextstate = t_edge.getResultingNode();
                                 io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
+                                codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
                                 break;
                             }
                         }
@@ -395,6 +404,7 @@ public class Parser {
                             {
                                 nextstate = t_edge.getResultingNode();
                                 io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
+                                codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
                                 break;
                             }
                         }
@@ -407,6 +417,7 @@ public class Parser {
                             nextstate = t_edge.getResultingNode();
                             io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getType());
                             read_next_peek = true;
+                            codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
                             break;
                         }
                         else if (t_edge.getToken().getString().equals(peek.getString()))
@@ -414,6 +425,7 @@ public class Parser {
                             nextstate = t_edge.getResultingNode();
                             io.writeParseTreeNode(currentNonTerminals.size(), t_edge.getToken().getString());
                             read_next_peek = true;
+                            codeGenerator.runSemanticRoutine(t_edge.getRoutine(), peek);
                             break;
                         }
                     }
@@ -435,6 +447,8 @@ public class Parser {
                         makeError(line_no, "Missing " + terminal_name);
                         io.writeParseTreeNode(currentNonTerminals.size(), "*"+terminal_name);
                         nextstate = t_edge.getResultingNode();
+                        //stopping codeGenerator
+                        codeGenerator.ok = false;
                     }
                 }
                 else
@@ -448,6 +462,7 @@ public class Parser {
                     if (nextstate != 0)
                     {
                         io.writeParseTreeNode(currentNonTerminals.size() - 1, nt_edge_string);
+                        codeGenerator.runSemanticRoutine(nt_edge.getRoutineBefore(), peek);
                         break;
                     }
 
@@ -458,6 +473,7 @@ public class Parser {
                         if (nextstate != 0)
                         {
                             io.writeParseTreeNode(currentNonTerminals.size() - 1, nt_edge_string);
+                            codeGenerator.runSemanticRoutine(nt_edge.getRoutineBefore(), peek);
                             break;
                         }
                     }
@@ -482,12 +498,14 @@ public class Parser {
                             nextstate = nt_edge.getReturningNode();
                             makeError(line_no, "Missing " + nt_edge_string);
                             io.writeParseTreeNode(currentNonTerminals.size(), "*"+nt_edge_string);
+                            codeGenerator.ok = false;
                         }
                         else
                         {
                             makeError(line_no, "Unexpected " + terminal_name);
                             nextstate = state;
                             read_next_peek = true;
+                            codeGenerator.ok = false;
                         }
                     }
                 }
@@ -505,6 +523,7 @@ public class Parser {
                 if (peek.getType().equals(set.get(j))) {
                     nextstate = nt_edge.getResultingNode();
                     stack.add(nt_edge.getReturningNode());
+                    routineStack.add(nt_edge.getRoutineAfter());
                     cNT.add(nt_edge.getString());
                     return nextstate;
                 }
@@ -512,6 +531,7 @@ public class Parser {
                 if (peek.getString().equals(set.get(j))) {
                     nextstate = nt_edge.getResultingNode();
                     stack.add(nt_edge.getReturningNode());
+                    routineStack.add(nt_edge.getRoutineAfter());
                     cNT.add(nt_edge.getString());
                     return nextstate;
                 }
