@@ -22,6 +22,7 @@ public class CodeGenerator {
     private int switchOrLoops;
     private ArrayList<String> typeStack;
     private String type1, type2;
+    private boolean case_started;
 
     public boolean ok;
 
@@ -52,6 +53,7 @@ public class CodeGenerator {
         offset = 0;
         switchOrLoops = 0;
         typeStack = new ArrayList<>();
+        case_started = false;
 
         errors = ErrorManager.errors;
         // initializing stack pointer
@@ -337,9 +339,23 @@ public class CodeGenerator {
                 switchOrLoops--;
                 break;
             case "save_case":
+                if (case_started)
+                {
+                    PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(codePointer+3), "" , "");
+                    codePointer++;
+                    label = SS.get(SS.size() - 2);
+                    int num = SS.get(SS.size() - 1);
+                    expressionResult = SS.get(SS.size() - 3);
+                    tempMem = getTemporary();
+                    PB[label] = new ThreeAddressCode("EQ", String.valueOf(expressionResult), "#" + num, String.valueOf(tempMem) );
+                    PB[label + 1] = new ThreeAddressCode("JPF", String.valueOf(tempMem), String.valueOf(codePointer), "");
+                    for (int i = 0 ; i < 2; i++)
+                        SS.remove(SS.size() - 1);
+                }
                 SS.add(codePointer);
                 SS.add(Integer.valueOf(peek.getString()));
                 codePointer+=2;
+                case_started = true;
                 break;
             case "fill_case":
                 label = SS.get(SS.size() - 2);
@@ -563,8 +579,14 @@ public class CodeGenerator {
                 codePointer++;
                 SS.add(tempMem);
                 break;
+            case "check_main":
+                entry = symbolTableManager.lookup("function", "main");
+                if (entry == null)
+                {
+                    makeError(line_no, "main function not found");
+                    return;
+                }
             default:
-
                 break;
         }
     }
