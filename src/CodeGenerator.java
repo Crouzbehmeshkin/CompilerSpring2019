@@ -3,7 +3,7 @@ import java.util.ArrayList;
 public class CodeGenerator {
     private SymbolTableManager symbolTableManager;
     private ThreeAddressCode[] PB = new ThreeAddressCode[1000];
-    private int codePointer = 0, stackPointer = 1000, rA = 1003, tempAddress = 4000;
+    private int codePointer = 0, stackPointer = 1000, rA = 1003, tempAddress = 4000, stackPointerSave = 1001;
     private int outputFunction = 0;
 
     private ArrayList<String> idName;
@@ -29,7 +29,7 @@ public class CodeGenerator {
     private ArrayList<Error> errors;
 
     //1000: stack pointer
-    //1001: frame pointer
+    //1001: stack pointer save
     //1002: temporary
     //1003: return address
 
@@ -538,6 +538,8 @@ public class CodeGenerator {
                 SS.add(0);
                 SS.add(entry.getLine());
                 SS.add(entry.getParams().size());
+                PB[codePointer] = new ThreeAddressCode("ASSIGN", String.valueOf(stackPointer), String.valueOf(stackPointerSave), "");
+                codePointer++;
                 PB[codePointer] = new ThreeAddressCode("ADD", String.valueOf(stackPointer), "#1", String.valueOf(stackPointer));
                 codePointer++;
                 break;
@@ -614,7 +616,7 @@ public class CodeGenerator {
         {
             address = -address;
             tempMem = getTemporary();
-            PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+address, String.valueOf(tempMem));
+            PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointerSave), "#"+address, String.valueOf(tempMem));
             codePointer++;
             return "@"+tempMem;
         }
@@ -630,17 +632,17 @@ public class CodeGenerator {
         {
             address = -address - change;
             if (address == 0)
-                return "@" + stackPointer;
+                return "@" + stackPointerSave;
             if (address > 0)
             {
                 tempMem = getTemporary();
-                PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointer), "#"+address, String.valueOf(tempMem));
+                PB[codePointer] = new ThreeAddressCode("SUB", String.valueOf(stackPointerSave), "#"+address, String.valueOf(tempMem));
                 codePointer++;
                 return "@" + tempMem;
             }
             tempMem = getTemporary();
             address = -address;
-            PB[codePointer] = new ThreeAddressCode("ADD", String.valueOf(stackPointer), "#"+address, String.valueOf(tempMem));
+            PB[codePointer] = new ThreeAddressCode("ADD", String.valueOf(stackPointerSave), "#"+address, String.valueOf(tempMem));
             codePointer++;
             return "@"+tempMem;
         }
