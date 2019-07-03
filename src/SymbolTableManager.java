@@ -18,7 +18,7 @@ public class SymbolTableManager {
         SymbolTableKey key = new SymbolTableKey("function", "output");
         ArrayList<String> params = new ArrayList<>();
         params.add("int0");
-        SymbolTableEntry entry = new SymbolTableEntry(address, "int", 0, 2, 0, params);
+        SymbolTableEntry entry = new SymbolTableEntry(address, "int", 0, 4, 0, params);
         address++;
         globalSymbolTable.put(key, entry);
 

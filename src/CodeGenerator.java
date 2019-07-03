@@ -22,7 +22,7 @@ public class CodeGenerator {
     private int switchOrLoops;
     private ArrayList<String> typeStack;
     private String type1, type2;
-    private boolean case_started;
+    private ArrayList<Integer> case_started;
 
     public boolean ok;
 
@@ -53,11 +53,16 @@ public class CodeGenerator {
         offset = 0;
         switchOrLoops = 0;
         typeStack = new ArrayList<>();
-        case_started = false;
+        case_started = new ArrayList<>();
 
         errors = ErrorManager.errors;
         // initializing stack pointer
         PB[codePointer] = new ThreeAddressCode("ASSIGN", "#5000", "1000", "");
+        codePointer++;
+
+        PB[codePointer] = new ThreeAddressCode("ASSIGN", "#999", "@"+stackPointer, "");
+        codePointer++;
+        PB[codePointer] = new ThreeAddressCode("ADD", String.valueOf(stackPointer), "#1", String.valueOf(stackPointer));
         codePointer++;
 
         // code for output function
@@ -128,7 +133,7 @@ public class CodeGenerator {
                 functionParamNames = new ArrayList<>();
                 if (idName.get(idName.size() - 1).equals("main") && symbolTableManager.getScopeNo() == 1)
                 {
-                    PB[1] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
+                    PB[3] = new ThreeAddressCode("JP", String.valueOf(codePointer), "", "");
                     symbolTableManager.insert("function", idName.get(idName.size() - 1), declarationType, -1, 0, codePointer);
                     codePointer--;
                 }
@@ -329,6 +334,7 @@ public class CodeGenerator {
             case "add_switch_scope":
                 symbolTableManager.addScope();
                 switchOrLoops++;
+                case_started.add(0);
                 break;
             case "remove_switch_scope":
                 breaks = symbolTableManager.lookup_scope_breaks();
@@ -337,9 +343,10 @@ public class CodeGenerator {
                 SS.remove(SS.size() - 1);
                 symbolTableManager.removeScope();
                 switchOrLoops--;
+                case_started.remove(case_started.size() - 1);
                 break;
             case "save_case":
-                if (case_started)
+                if (case_started.get(case_started.size() - 1) == 1)
                 {
                     PB[codePointer] = new ThreeAddressCode("JP", String.valueOf(codePointer+3), "" , "");
                     codePointer++;
@@ -355,7 +362,7 @@ public class CodeGenerator {
                 SS.add(codePointer);
                 SS.add(Integer.valueOf(peek.getString()));
                 codePointer+=2;
-                case_started = true;
+                case_started.set(case_started.size() - 1, 1);
                 break;
             case "fill_case":
                 label = SS.get(SS.size() - 2);
@@ -366,6 +373,7 @@ public class CodeGenerator {
                 PB[label + 1] = new ThreeAddressCode("JPF", String.valueOf(tempMem), String.valueOf(codePointer), "");
                 for (int i = 0 ; i < 2; i++)
                     SS.remove(SS.size() - 1);
+                case_started.set(case_started.size() - 1, 0);
                 break;
             case "save_signed_factor_name":
                 signedFactorName = peek.getString();

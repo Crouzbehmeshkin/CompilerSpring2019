@@ -1,22 +1,31 @@
-int add(int a, int b)
-{
-    return a + b;
-}
-
 void main(void)
 {
-    int a[10];
+    int a;
     int b;
-    void q(int c)
+    int c;
+    c = 5;
+    a = 4;
+    switch(c)
     {
-        output(c);
+        case 3:
+            output(3);
+            break;
+        case 5:
+            switch(a)
+            {
+                case 4:
+                    output(44);
+                case 5:
+                    output(45);
+                    break;
+            }
+            output(55);
+            break;
     }
-    int p(int c, int d[])
-    {
-        c = c*d[0]*2;
-        return c;
-    }
-    a[0] = 7;
-    b = 4;
-    q(p(b,a));
+
+
+}
+void f(int a, int b)
+{
+    return;
 }
