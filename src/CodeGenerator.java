@@ -409,9 +409,7 @@ public class CodeGenerator {
                 tempMem = getTemporary();
                 addressString = getAddressString(SS.get(SS.size() - 2));
                 addressString2 = getAddressString(SS.get(SS.size() - 1));
-                if (addressString.charAt(0) == '@')
-                    addressString = addressString.substring(1);
-                else
+                if (addressString.charAt(0) != '@')
                     addressString = "#" + addressString;
                 PB[codePointer] = new ThreeAddressCode("ADD", addressString, addressString2, String.valueOf(tempMem));
                 codePointer++;
@@ -552,14 +550,18 @@ public class CodeGenerator {
                     makeError(line_no, "Mismatch in argument types");
                     return;
                 }
-                typeStack.remove(typeStack.size() - 1);
                 addressString = getAddressString(SS.get(SS.size() - 1));
+                if (type2.equals("int1") && addressString.charAt(0)!='@')
+                {
+                    addressString = "#" + addressString;
+                }
                 PB[codePointer] = new ThreeAddressCode("ASSIGN",addressString, "@"+stackPointer, "" );
                 codePointer++;
                 PB[codePointer] = new ThreeAddressCode("ADD", String.valueOf(stackPointer), "#1", String.valueOf(stackPointer));
                 codePointer++;
                 SS.remove(SS.size() - 1);
                 SS.set(SS.size() - 3, SS.get(SS.size() - 3) + 1);
+                typeStack.remove(typeStack.size() - 1);
                 break;
             case "call":
                 if (SS.get(SS.size()- 3) != SS.get(SS.size() - 1))
